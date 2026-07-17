@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import type {Field,PlanAction} from './types.js';
 import market from '../data/markets/saudi-arabia.json' with {type:'json'};
 
-const planSchema={type:'object',additionalProperties:false,required:['supported','reason','actions'],properties:{supported:{type:'boolean'},reason:{type:'string'},actions:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,required:['action','locator','reason'],properties:{action:{type:'string',enum:['fill','click','observe']},fieldPurpose:{type:'string'},valueKey:{type:'string'},reason:{type:'string'},locator:{type:'object',additionalProperties:false,required:['strategy','value'],properties:{strategy:{type:'string',enum:['label','role','name','id','css']},value:{type:'string'}}}}}}}} as const;
+const planSchema={type:'object',additionalProperties:false,required:['supported','reason','actions'],properties:{supported:{type:'boolean'},reason:{type:'string'},actions:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,required:['action','fieldPurpose','valueKey','locator','reason'],properties:{action:{type:'string',enum:['fill','click','observe']},fieldPurpose:{type:['string','null']},valueKey:{type:['string','null']},reason:{type:'string'},locator:{type:'object',additionalProperties:false,required:['strategy','value'],properties:{strategy:{type:'string',enum:['label','role','name','id','css']},value:{type:'string'}}}}}}}} as const;
 
 export async function createPlan(fields:Field[],buttons:string[]):Promise<{supported:boolean;reason:string;actions:PlanAction[];source:'gpt-5.6'|'deterministic-fallback'}>{
   if(process.env.OPENAI_API_KEY){
