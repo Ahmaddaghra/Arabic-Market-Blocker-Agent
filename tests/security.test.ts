@@ -1,0 +1,2 @@
+import{describe,it,expect,vi}from'vitest';import{isPrivateIp,assertSafeUrl}from'../server/security.js';
+describe('SSRF protection',()=>{it.each(['127.0.0.1','10.0.0.1','192.168.1.2','172.16.2.3','169.254.1.1','::1','fd00::1'])("blocks private address %s",ip=>expect(isPrivateIp(ip)).toBe(true));it('rejects unsafe protocols',async()=>await expect(assertSafeUrl('file:///etc/passwd')).rejects.toThrow('http'));it('rejects credentials',async()=>await expect(assertSafeUrl('https://user:pass@example.com')).rejects.toThrow('credentials'));});

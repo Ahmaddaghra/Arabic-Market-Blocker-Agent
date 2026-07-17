@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: arabic-market-blocker-agent
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: OPENAI_MODEL
+        value: gpt-5.6
+      - key: AUDIT_TIMEOUT_MS
+        value: 20000
+      - key: ALLOW_PRIVATE_TARGETS
+        value: false
+      - key: OPENAI_API_KEY
+        sync: false

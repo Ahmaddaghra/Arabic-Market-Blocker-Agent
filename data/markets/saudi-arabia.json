@@ -1,0 +1,16 @@
+{
+  "id":"saudi-arabia","label":"Saudi Arabia","locale":"ar-SA","direction":"rtl",
+  "persona":{"fullName":"عبد الرحمن بن خالد العتيبي","mixedName":"عبد الرحمن Alotaibi","email":"abdulrahman.saudi@example.com","phoneLocal":"0551234567","phoneInternational":"+966551234567","city":"الرياض","password":"SafeDemo!2026","arabicIndicDigits":"٠٥٥١٢٣٤٥٦٧"},
+  "checks":[
+    {"id":"arabic-name","label":"Arabic Unicode name acceptance","severity":"blocker"},
+    {"id":"phone-local","label":"Saudi local phone acceptance","severity":"blocker"},
+    {"id":"phone-international","label":"Saudi international phone acceptance","severity":"blocker"},
+    {"id":"arabic-indic-digits","label":"Arabic-Indic numeral handling","severity":"warning"},
+    {"id":"mixed-bidi","label":"Mixed Arabic/English BiDi input","severity":"warning"},
+    {"id":"localized-errors","label":"Localized validation messages","severity":"warning"},
+    {"id":"field-direction","label":"Input direction and alignment","severity":"warning"},
+    {"id":"long-name","label":"Long compound name handling","severity":"warning"},
+    {"id":"flow-completion","label":"Signup flow completion","severity":"blocker"},
+    {"id":"english-control","label":"English baseline comparison","severity":"info"}
+  ]
+}
