@@ -1,0 +1,8 @@
+.planner p { line-height: 1.45; margin: 8px 0 0; }
+.fallback-reason { color: #a62920; }
+.adaptive-ok { color: #087848; }
+.planner-log { border: 1px solid #cfd9e0; border-radius: 8px; margin-bottom: 16px; background: #f7faf9; }
+.planner-log > div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #dce4e8; }
+.planner-log span { color: #087848; font-weight: 700; }
+.planner-log ol { margin: 0; padding: 12px 18px 12px 40px; max-height: 220px; overflow: auto; }
+.planner-log li { margin: 6px 0; color: #425164; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
