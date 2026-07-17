@@ -8,7 +8,7 @@ services:
       - key: OPENAI_MODEL
         value: gpt-5.6
       - key: AUDIT_TIMEOUT_MS
-        value: 20000
+        value: 60000
       - key: ALLOW_PRIVATE_TARGETS
         value: false
       - key: OPENAI_API_KEY
