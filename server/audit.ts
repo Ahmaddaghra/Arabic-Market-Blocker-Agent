@@ -221,6 +221,16 @@ export function classifyComparison(
   if (arabic.accepted) return "pass";
   return english.accepted ? "market-specific" : "general-form-issue";
 }
+export function summarizeFindings(findings: Finding[]) {
+  const generalFormIssues = findings.filter((finding) =>
+    finding.rootCauseId.startsWith("general-"),
+  ).length;
+  const marketSpecificBlockers = findings.length - generalFormIssues;
+  return {
+    counts: { marketSpecificBlockers, generalFormIssues },
+    verdict: `Market-specific blockers: ${marketSpecificBlockers} · General form issues: ${generalFormIssues} (affect all users)`,
+  };
+}
 
 type Planner = (
   fields: Field[],
@@ -709,11 +719,11 @@ export async function runAudit(
           flowCompleted,
         }
       : null;
+    const verdictSummary = summarizeFindings(findings);
     const result = {
       status: "completed" as const,
-      verdict: findings.length
-        ? `Found ${findings.length} unique blocker${findings.length === 1 ? "" : "s"} across ${failingTestCases} failing test cases`
-        : `No blockers found in tested flows; ${passes.length} ${market.shortLabel}-market checks passed`,
+      verdict: verdictSummary.verdict,
+      verdictCounts: verdictSummary.counts,
       url: url.href,
       market: marketSummary,
       planner: plan.source,

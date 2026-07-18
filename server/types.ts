@@ -103,6 +103,7 @@ export type MarketSummary = {
 export type AuditResult = {
   status: "completed" | "unsupported";
   verdict: string;
+  verdictCounts?: { marketSpecificBlockers: number; generalFormIssues: number };
   url: string;
   market: MarketSummary;
   planner: string;

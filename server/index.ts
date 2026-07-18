@@ -5,7 +5,7 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { assertSafeUrl } from "./security.js";
-import { runAudit } from "./audit.js";
+import { runAudit, summarizeFindings } from "./audit.js";
 import { listMarkets } from "./markets.js";
 import type { AuditProgress, AuditResult } from "./types.js";
 const app = express();
@@ -37,6 +37,9 @@ async function loadBundledReports() {
     report.runId = slug;
     report.reportUrl = `/report/${slug}`;
     report.durableReport = true;
+    const verdictSummary = summarizeFindings(report.findings);
+    report.verdict = verdictSummary.verdict;
+    report.verdictCounts = verdictSummary.counts;
     report.screenshots = {
       baseline: `data:image/png;base64,${english.replace(/\s/g, "")}`,
       arabic: `data:image/png;base64,${arabic.replace(/\s/g, "")}`,

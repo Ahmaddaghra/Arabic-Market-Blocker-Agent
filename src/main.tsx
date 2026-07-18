@@ -19,6 +19,7 @@ type PlanAction = {
 type Result = {
   status: string;
   verdict: string;
+  verdictCounts?: { marketSpecificBlockers: number; generalFormIssues: number };
   url: string;
   market: MarketSummary;
   planner: string;
@@ -49,6 +50,7 @@ type Result = {
   deterministicPlan: PlanAction[];
   findings: Array<{
     id: string;
+    rootCauseId: string;
     title: string;
     severity: string;
     summary: string;
@@ -564,6 +566,14 @@ function WhyGptPanel({ result }: { result: Result }) {
 }
 function Results({ result }: { result: Result }) {
   const first = result.findings[0];
+  const generalFormIssues =
+    result.verdictCounts?.generalFormIssues ??
+    result.findings.filter((finding) =>
+      finding.rootCauseId?.startsWith("general-"),
+    ).length;
+  const marketSpecificBlockers =
+    result.verdictCounts?.marketSpecificBlockers ??
+    result.findings.length - generalFormIssues;
   return (
     <section className="results">
       <aside>
@@ -573,9 +583,11 @@ function Results({ result }: { result: Result }) {
           <small>Tested flow verdict</small>
           <h1>{result.verdict}</h1>
           <p>
-            {result.findings.length
+            {marketSpecificBlockers > 0
               ? `Evidence-backed issues can prevent ${result.market.label} users from completing this tested flow.`
-              : "No blockers were observed within the bounded checks that ran."}
+              : generalFormIssues > 0
+                ? "General form issues affect all users; no market-specific blocker was claimed."
+                : "No blockers were observed within the bounded checks that ran."}
           </p>
         </div>
         {result.findings.map((f, i) => (

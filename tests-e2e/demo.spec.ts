@@ -58,7 +58,10 @@ test("controlled benchmark uses the adaptive planner when an API key is configur
   await page.getByRole("button", { name: "Run Saudi signup audit" }).click();
   await expect(page.getByText("Live audit progress")).toBeVisible();
   await expect(
-    page.getByRole("heading", { level: 1, name: /Found 2 unique blockers/ }),
+    page.getByRole("heading", {
+      level: 1,
+      name: /Market-specific blockers: 2.*General form issues: 0/,
+    }),
   ).toBeVisible({ timeout: 120000 });
   await expect(
     page.getByText("Planner: gpt-5.6-sol (adaptive)", { exact: true }).first(),
@@ -86,7 +89,10 @@ test("missing API key is exposed as an explicit fallback path", async ({
   await page.getByRole("button", { name: "Run Saudi signup audit" }).click();
   await expect(page.getByText("Live audit progress")).toBeVisible();
   await expect(
-    page.getByRole("heading", { level: 1, name: /Found 2 unique blockers/ }),
+    page.getByRole("heading", {
+      level: 1,
+      name: /Market-specific blockers: 2.*General form issues: 0/,
+    }),
   ).toBeVisible({ timeout: 30000 });
   await expect(
     page.getByText("Planner: deterministic-fallback", { exact: true }).first(),
