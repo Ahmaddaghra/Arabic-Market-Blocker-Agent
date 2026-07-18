@@ -1,0 +1,30 @@
+{
+  "recordedAt": "2026-07-18T04:11:00+03:00",
+  "target": "https://arabic-market-blocker-agent.onrender.com/demo/adaptive/",
+  "environment": "deployed Render service",
+  "status": "completed",
+  "verdict": "Found 2 unique blockers across 2 failing test cases",
+  "planner": "gpt-5.6-sol-adaptive",
+  "fallbackReason": null,
+  "fieldComparisons": [
+    {"field":"How should we greet you?","valueKey":"fullName","english":"accepted","arabic":"rejected","classification":"market-specific"},
+    {"field":"Mobile / WhatsApp","valueKey":"phoneLocal","english":"accepted","arabic":"rejected","classification":"market-specific"},
+    {"field":"Work email","valueKey":"email","english":"accepted","arabic":"accepted","classification":"pass"},
+    {"field":"Password","valueKey":"password","english":"accepted","arabic":"accepted","classification":"pass"}
+  ],
+  "benchmarkEvaluation": {"groundTruthBlockers":2,"detectedBlockers":2,"truePositives":2,"falsePositives":0,"falseNegatives":0,"precision":1,"recall":1,"submissionAttempted":true,"flowCompleted":false},
+  "plannerLog": [
+    "Planner response received: model=gpt-5.6-sol, supported=true, actions=3",
+    "Decision 1: fill greeting name with fullName via label=How should we greet you?",
+    "Decision 2: fill mobile or WhatsApp number with phoneLocal via label=Mobile / WhatsApp",
+    "Decision 3: click page via role=Continue",
+    "Execution comparison: valueKey=fullName, EN=accepted, AR=Only Latin letters are allowed, classification=market-specific",
+    "Execution comparison: valueKey=phoneLocal, EN=accepted, AR=Use an accepted US contact number, classification=market-specific",
+    "Execution click: locator=role=Continue, EN=executed, AR=executed, submissionControl=false",
+    "Adaptive replan 1: visible DOM changed after click; fields=2, buttons=1, planner=gpt-5.6-sol-adaptive, supported=true",
+    "Replan 1: Decision 1: fill work email with email via label=Work email",
+    "Replan 1: Decision 2: fill password with password via label=Password",
+    "Replan 1: Decision 3: click form submission via role=Create workspace",
+    "Execution click: locator=role=Create workspace, EN=executed, AR=executed, submissionControl=true, flowCompleted=false"
+  ]
+}

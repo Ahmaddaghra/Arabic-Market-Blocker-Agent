@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-07-18T04:03:00+03:00",
+  "target": "http://127.0.0.1:3000/demo/adaptive/",
+  "environment": "local build with OPENAI_API_KEY intentionally absent",
+  "status": "unsupported",
+  "planner": "deterministic-fallback",
+  "fallbackReason": "missing_key: OPENAI_API_KEY is not configured.",
+  "supportMessage": "Deterministic fallback could not safely map at least two visible fields; adaptive planning is required.",
+  "visibleFields": ["How should we greet you?", "Mobile / WhatsApp"],
+  "mappedFields": 0,
+  "plannerLog": [
+    "Planner request not started: model=gpt-5.6",
+    "Fallback activated: missing_key: OPENAI_API_KEY is not configured.",
+    "Fallback mapping: mapped=0/2; supported=false",
+    "Graceful stop: Deterministic fallback could not safely map at least two visible fields; adaptive planning is required."
+  ]
+}
