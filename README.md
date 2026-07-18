@@ -73,3 +73,18 @@ DNS rebinding defenses should be strengthened further before production use by p
 `React UI → rate-limited Express API → URL safety gate → isolated Playwright → DOM extractor → GPT-5.6 planner → evidence verifier → grounded test generator`
 
 The controlled `/demo/` target is a transparent benchmark with two documented failures: Arabic Unicode names and Saudi phone numbers. It is not presented as real-world validation.
+
+## Controlled benchmark ground truth
+
+The benchmark has exactly two seeded root causes:
+
+| Root cause | Seeded behavior | Ground-truth blocker |
+|---|---|---|
+| `name-ascii-only` | Arabic or mixed-script `Full name` shows `Only English letters are allowed` | 1 |
+| `phone-us-only` | Saudi local, international, and Arabic-Indic phone values show `Enter a valid US phone number` | 1 |
+
+Repeated failing values are test cases, not new blockers. The audit deduplicates by `rootCauseId` and reports `benchmarkEvaluation` with precision, recall, false positives, false negatives, and whether the controlled submission completed.
+
+The API accepts `allowSubmission: true` only when the URL is the same-origin `/demo` benchmark. For every other URL the server forces it to `false`, and the planner is instructed not to click submit. The controlled benchmark may submit because it is owned, disposable, and marks success with `data-audit-success="true"`.
+
+For reproducibility, run the same deployed `/demo/` URL twice and compare `planner`, `plan`, `findings`, `benchmarkEvaluation`, and the planner decision log. Wording or action ordering may vary; the unique root-cause count and benchmark metrics must remain stable.
