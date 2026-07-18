@@ -97,6 +97,31 @@ main {
   color: #455466;
   font-size: 14px;
 }
+.sample-targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 12px;
+}
+.sample-targets button {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border: 1px solid #cbd6de;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #f8fafb;
+  color: #26384a;
+  cursor: pointer;
+}
+.sample-targets button:hover {
+  border-color: #087848;
+  background: #f0f8f4;
+}
+.sample-targets span {
+  color: #657384;
+  font-size: 12px;
+}
 .timeline {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -413,6 +438,11 @@ footer {
   }
   .run-row button {
     min-height: 52px;
+  }
+  .sample-targets button {
+    width: 100%;
+    border-radius: 8px;
+    justify-content: space-between;
   }
   .timeline {
     grid-template-columns: 1fr;

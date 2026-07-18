@@ -1,5 +1,11 @@
 import{test,expect}from'@playwright/test';
 
+test('sample chips fill targets without starting an audit',async({page})=>{
+  await page.goto('/');
+  const cases=[['Controlled benchmark','/demo/'],['Multi-step (GPT-only)','/demo/adaptive/'],['ParaBank (external)','https://parabank.parasoft.com/parabank/register.htm']]as const;
+  for(const[label,expected]of cases){await page.getByRole('button',{name:new RegExp(label.replace(/[()]/g,'\\$&'))}).click();await expect(page.getByLabel('Public signup form URL')).toHaveValue(new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));await expect(page.getByLabel('Market')).toHaveValue('saudi-arabia');await expect(page.getByText('Live audit progress')).toHaveCount(0);}
+});
+
 test('controlled benchmark uses the adaptive planner when an API key is configured',async({page})=>{
   test.skip(!process.env.OPENAI_API_KEY,'OPENAI_API_KEY is required for the adaptive integration path.');
   await page.goto('/');

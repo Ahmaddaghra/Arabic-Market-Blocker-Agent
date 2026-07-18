@@ -204,6 +204,26 @@ function App() {
     locale: "ar-SA",
     currency: "SAR",
   };
+  const samples = [
+    {
+      label: "Controlled benchmark",
+      hint: "2 seeded blockers",
+      url: `${location.origin}/demo/`,
+      marketId: "saudi-arabia",
+    },
+    {
+      label: "Multi-step (GPT-only)",
+      hint: "fallback fails, GPT-5.6 succeeds",
+      url: `${location.origin}/demo/adaptive/`,
+      marketId: "saudi-arabia",
+    },
+    {
+      label: "ParaBank (external)",
+      hint: "external site, passes expected",
+      url: "https://parabank.parasoft.com/parabank/register.htm",
+      marketId: "saudi-arabia",
+    },
+  ];
   async function run() {
     setLoading(true);
     setError("");
@@ -283,6 +303,21 @@ function App() {
                 ? "Audit running live…"
                 : `Run ${selectedMarket.shortLabel} signup audit`}
             </button>
+          </div>
+          <div className="sample-targets" aria-label="Sample targets">
+            {samples.map((sample) => (
+              <button
+                key={sample.label}
+                type="button"
+                onClick={() => {
+                  setUrl(sample.url);
+                  setMarketId(sample.marketId);
+                }}
+              >
+                <strong>{sample.label}</strong>
+                <span>{sample.hint}</span>
+              </button>
+            ))}
           </div>
           <p className="limits">
             ◈ Public signup forms only · No CAPTCHA · No auth wall · Submission
