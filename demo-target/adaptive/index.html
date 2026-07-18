@@ -31,11 +31,20 @@
   </form>
 </main>
 <script>
-  const validateGreeting=()=>greetingError.textContent=/[^A-Za-z '-]/.test(greeting.value)?'Only Latin letters are allowed':'';
-  const validateContact=()=>contactError.textContent=!/^\+1\d{10}$/.test(contactLine.value)?'Use an accepted US contact number':'';
-  greeting.addEventListener('blur',validateGreeting);
-  contactLine.addEventListener('blur',validateContact);
-  continue.addEventListener('click',()=>{validateGreeting();validateContact();stepOne.hidden=true;stepTwo.hidden=false});
-  signup.addEventListener('submit',event=>{event.preventDefault();success.hidden=Boolean(greetingError.textContent||contactError.textContent)});
+  const greetingField=document.getElementById('greeting');
+  const contactField=document.getElementById('contactLine');
+  const greetingErrorNode=document.getElementById('greetingError');
+  const contactErrorNode=document.getElementById('contactError');
+  const stepOneNode=document.getElementById('stepOne');
+  const stepTwoNode=document.getElementById('stepTwo');
+  const continueButton=document.getElementById('continue');
+  const signupForm=document.getElementById('signup');
+  const successNode=document.getElementById('success');
+  const validateGreeting=()=>greetingErrorNode.textContent=/[^A-Za-z '-]/.test(greetingField.value)?'Only Latin letters are allowed':'';
+  const validateContact=()=>contactErrorNode.textContent=!/^\+1\d{10}$/.test(contactField.value)?'Use an accepted US contact number':'';
+  greetingField.addEventListener('blur',validateGreeting);
+  contactField.addEventListener('blur',validateContact);
+  continueButton.addEventListener('click',()=>{validateGreeting();validateContact();stepOneNode.hidden=true;stepTwoNode.hidden=false});
+  signupForm.addEventListener('submit',event=>{event.preventDefault();successNode.hidden=Boolean(greetingErrorNode.textContent||contactErrorNode.textContent)});
 </script>
 </html>
