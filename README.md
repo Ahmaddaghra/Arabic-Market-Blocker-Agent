@@ -39,6 +39,21 @@ Market packs are discovered and schema-validated dynamically from `data/markets`
 
 Unsupported pages stop with a clear explanation. The runner never attempts CAPTCHA bypass or credentialed flows.
 
+## Why not existing tools?
+
+These are strong tools that solve related but different problems:
+
+| Existing tool | What it covers | What it doesn't do for Arab-market readiness |
+|---|---|---|
+| Playwright MCP | Browser automation, form filling, and test generation | No Arab-market knowledge: which values must be accepted or what counts as a market blocker |
+| Virtuoso QA / AI testing platforms | General AI-driven web testing and locale data | General-purpose platforms, not a focused verdict on whether Arabic users can complete a flow |
+| Applitools | Visual localization comparison and layout/overflow detection | Visual focus; it does not prove Arabic names and phones are accepted or that signup completes |
+| BrowserStack | Real devices, geolocations, and locales | Provides the environment, not the Arab-market expertise or the finding/evidence/test output |
+| Lokalise / translation QA | String and translation quality | Does not execute the user journey inside the product |
+| Raqeeb (open source) | Static HTML/CSS RTL checks and a 0–100 score | Static analysis; no real browser journey, EN/AR control comparison, or generated regression tests |
+
+This project's contribution is packaging market knowledge (versioned rule packs) + a bounded adaptive planner + evidence-grounded regression tests into a single decision-focused tool.
+
 ## Why this is not an ad-hoc Codex prompt
 
 An ad-hoc prompt has no stable inputs, rubric, evidence contract, or repeatability guarantee. This project makes the workflow reproducible through:
