@@ -12,7 +12,7 @@ afterAll(async()=>{await browser.close()});
 describe('planner action executor',()=>{
   it('executes a DOM-grounded click and keeps submit gating server-side',async()=>{
     await page.setContent('<button id="continue" type="button" onclick="this.dataset.clicked=\'yes\'">Continue</button><button id="submit" type="submit">Create account</button>');
-    const click=await executeClick(page,{strategy:'id',value:'continue'},false);
+    const click=await executeClick(page,{strategy:'role',value:'button:Continue'},false);
     expect(click).toEqual({executed:true,submissionControl:false,reason:null});
     expect(await page.locator('#continue').getAttribute('data-clicked')).toBe('yes');
     expect(await executeClick(page,{strategy:'id',value:'submit'},false)).toEqual({executed:false,submissionControl:true,reason:'submission_not_allowed'});
