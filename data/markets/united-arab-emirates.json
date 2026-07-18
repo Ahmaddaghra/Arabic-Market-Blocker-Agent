@@ -1,10 +1,10 @@
 {
-  "id":"saudi-arabia","label":"Saudi Arabia","shortLabel":"Saudi","locale":"ar-SA","direction":"rtl","currency":"SAR",
-  "persona":{"fullName":"عبد الرحمن بن خالد العتيبي","mixedName":"عبد الرحمن Alotaibi","email":"abdulrahman.saudi@example.com","phoneLocal":"0551234567","phoneInternational":"+966551234567","city":"الرياض","password":"SafeDemo!2026","arabicIndicDigits":"٠٥٥١٢٣٤٥٦٧","currency":"SAR"},
+  "id":"united-arab-emirates","label":"United Arab Emirates","shortLabel":"UAE","locale":"ar-AE","direction":"rtl","currency":"AED",
+  "persona":{"fullName":"مريم بنت راشد المنصوري","mixedName":"مريم Al Mansouri","email":"maryam.uae@example.com","phoneLocal":"0501234567","phoneInternational":"+971501234567","city":"دبي","password":"SafeDemo!2026","arabicIndicDigits":"٠٥٠١٢٣٤٥٦٧","currency":"AED"},
   "checks":[
     {"id":"arabic-name","label":"Arabic Unicode name acceptance","severity":"blocker"},
-    {"id":"phone-local","label":"Saudi local phone acceptance","severity":"blocker"},
-    {"id":"phone-international","label":"Saudi international phone acceptance","severity":"blocker"},
+    {"id":"phone-local","label":"UAE local phone acceptance","severity":"blocker"},
+    {"id":"phone-international","label":"UAE international phone acceptance","severity":"blocker"},
     {"id":"arabic-indic-digits","label":"Arabic-Indic numeral handling","severity":"warning"},
     {"id":"mixed-bidi","label":"Mixed Arabic/English BiDi input","severity":"warning"},
     {"id":"localized-errors","label":"Localized validation messages","severity":"warning"},

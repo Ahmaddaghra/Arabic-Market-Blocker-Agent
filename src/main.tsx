@@ -1,14 +1,619 @@
-import React,{useState} from 'react';import{createRoot}from'react-dom/client';import'./styles.css';import'./planner.css';
-type FieldEvidence={value:string;actual:string;accepted:boolean;validationMessage:string;locator:{strategy:string;value:string}};
-type PlanAction={action:'fill'|'click'|'observe';fieldPurpose:string|null;valueKey:string|null;reason:string;locator:{strategy:string;value:string}};
-type Result={status:string;verdict:string;url:string;planner:string;fallbackReason:string|null;plannerLog:string[];allowSubmission:boolean;benchmarkEvaluation:null|{groundTruthBlockers:number;detectedBlockers:number;failingTestCases:number;truePositives:number;falsePositives:number;falseNegatives:number;precision:number;recall:number;submissionAttempted:boolean;flowCompleted:boolean};supportMessage?:string;fields:Array<{type:string;label:string;name:string;placeholder:string;locator:{strategy:string;value:string}}>;plan:PlanAction[];deterministicPlan:PlanAction[];findings:Array<{id:string;title:string;severity:string;summary:string;impact:string;actual:string;expected:string;locator:{strategy:string;value:string};evidenceScreenshot:string;generatedTest:string;testCases:Array<{checkId:string;valueKey:string;value:string;actual:string}>}>;passes:Array<{checkId:string;valueKey:string;locator:{strategy:string;value:string};actual:string}>;fieldComparisons:Array<{checkId:string;fieldPurpose:string;valueKey:string;classification:'market-specific'|'general-form-issue'|'pass';english:FieldEvidence;arabic:FieldEvidence;evidence:{englishScreenshot:string;arabicScreenshot:string}}> ;screenshots:{baseline:string;arabic:string};comparison:{english:string;arabic:string}};
-type ProgressEvent={sequence:number;step:number;totalSteps:number|null;type:'status'|'planner'|'action'|'finding'|'graceful-exit'|'complete';message:string;planner:string;timestamp:string};
-type Job={status:'queued'|'running'|'completed'|'unsupported'|'failed';events:ProgressEvent[];result?:Result;error?:string};
-const stages=['Safe URL check','Browser launch','DOM analysis','English baseline','Arabic persona test'];
-function LiveProgress({events,status}:{events:ProgressEvent[];status:string}){const latest=events.at(-1);return <section className="live-progress" aria-live="polite"><div className="live-progress-head"><div><small>Live audit progress</small><h2>{latest?.message||'Audit queued…'}</h2></div><div className="progress-meta"><strong>{latest?`Step ${latest.step}/${latest.totalSteps??'?'}`:'Step 0/?'}</strong><span>Planner: {latest?.planner||'pending'}</span></div></div><div className="progress-track"><i style={{width:latest?.totalSteps?`${Math.min(100,(latest.step/latest.totalSteps)*100)}%`:'8%'}}/></div><ol>{events.map(event=><li className={event.type} key={event.sequence}><span>{event.type==='finding'?'!':event.type==='graceful-exit'?'×':'✓'}</span><div><b>{event.message}</b><small>Step {event.step}/{event.totalSteps??'?'} · {event.planner}</small></div></li>)}</ol>{status==='running'&&<p className="still-running">The audit continues server-side. Keep this tab open to see each decision.</p>}</section>}
-function App(){const[url,setUrl]=useState('');const[loading,setLoading]=useState(false);const[result,setResult]=useState<Result|null>(null);const[error,setError]=useState('');const[events,setEvents]=useState<ProgressEvent[]>([]);const[jobStatus,setJobStatus]=useState('idle');async function run(){setLoading(true);setError('');setResult(null);setEvents([]);setJobStatus('queued');try{const parsed=new URL(url);const allowSubmission=parsed.origin===location.origin&&parsed.pathname.startsWith('/demo');const response=await fetch('/api/audit-jobs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({url,allowSubmission})});const created=await response.json();if(!response.ok)throw new Error(created.error||'Audit could not be queued safely.');for(let attempt=0;attempt<360;attempt++){const poll=await fetch(created.pollUrl,{cache:'no-store'});const job=await poll.json() as Job;if(!poll.ok)throw new Error(job.error||'Audit progress expired.');setEvents(job.events||[]);setJobStatus(job.status);if(job.status==='completed'||job.status==='unsupported'){if(job.result)setResult(job.result);return}if(job.status==='failed')throw new Error(job.error||job.events.at(-1)?.message||'Audit stopped safely.');await new Promise(resolve=>setTimeout(resolve,500))}throw new Error('Audit progress polling timed out safely.')}catch(e){setError(e instanceof Error?e.message:'Audit failed safely.');setJobStatus('failed')}finally{setLoading(false)}}const timelineDone=result?.status==='completed';const timelineStopped=result?.status==='unsupported';return <><header><div className="brand"><span className="mark">ع</span>Arabic Market Blocker Agent</div><a href="#scope">Scope</a></header><main><section className="runner"><label htmlFor="url">Public signup form URL</label><div className="run-row"><input id="url" value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://example.com/signup"/><button onClick={run} disabled={loading||!url}>{loading?'Audit running live…':'Run Saudi signup audit'}</button></div><p className="limits">◈ Public signup forms only · No CAPTCHA · No auth wall · Submission enabled only for the owned /demo benchmark</p></section><section className="timeline">{stages.map((s,i)=><div className={loading?'active':timelineDone?'done':''} key={s}><span>{timelineDone?'✓':i+1}</span><b>{s}</b><small>{timelineDone?'Completed':timelineStopped?'Stopped safely':loading?'Streaming':'Bounded step'}</small></div>)}</section>{(loading||events.length>0)&&<LiveProgress events={events} status={jobStatus}/>} {error&&<section className="unsupported"><strong>Audit stopped safely</strong><p>{events.at(-1)?.type==='graceful-exit'?events.at(-1)?.message:error}</p><span>The streamed reason above is the exact graceful-exit reason.</span></section>}{result&&result.status==='unsupported'&&<section className="unsupported"><strong>Unsupported site</strong><p>{result.supportMessage}</p><span>This is an intentional bounded fallback, not a failed run.</span></section>}{result&&result.status==='completed'&&<Results result={result}/>}<section id="scope" className="scope"><h2>Intentionally bounded</h2><p>One public standard signup flow, one Saudi market rule pack, no CAPTCHA bypass, no authentication wall, no payment, and no claim of certification.</p></section></main><footer>Safe URL resolution · Private IP blocking · Hard timeout · Rate limited</footer></>}
-function FieldComparisonTable({rows}:{rows:Result['fieldComparisons']}){return <div className="field-comparisons"><div className="field-comparison-head"><b>Per-field control comparison</b><span>Two isolated browser contexts</span></div>{rows.map((row,index)=><div className="field-comparison-row" key={`${row.valueKey}-${index}`}><div><b>{row.fieldPurpose}</b><code>{row.english.locator.strategy}: {row.english.locator.value}</code><span className={`classification ${row.classification}`}>{row.classification.replaceAll('-',' ')}</span></div><PersonaState label="English persona · en-US" evidence={row.english}/><PersonaState label="Arabic persona · ar-SA" evidence={row.arabic}/></div>)}</div>}
-function PersonaState({label,evidence}:{label:string;evidence:FieldEvidence}){return <div className={evidence.accepted?'persona-state accepted':'persona-state rejected'}><small>{label}</small><strong>{evidence.accepted?'Accepted':'Rejected'}</strong><code>Value: {evidence.value}</code>{evidence.validationMessage?<p>{evidence.validationMessage}</p>:<p>Value preserved; no validation error.</p>}</div>}
-function WhyGptPanel({result}:{result:Result}){const fallbackKeys=new Set(result.deterministicPlan.map(action=>`${action.action}:${action.locator.strategy}:${action.locator.value}:${action.valueKey}`));const adaptiveOnly=result.plan.filter(action=>!fallbackKeys.has(`${action.action}:${action.locator.strategy}:${action.locator.value}:${action.valueKey}`));return <section className="why-gpt"><div className="why-gpt-title"><div><small>Adaptive planning evidence</small><h2>Why GPT-5.6 mattered</h2></div><span>{result.plan.length} decisions · {adaptiveOnly.length} beyond fallback</span></div><div className="why-grid"><div><h3>Fields identified</h3>{result.fields.map((field,index)=><p key={`${field.name}-${index}`}><b>{field.label||field.name||field.type}</b><code>{field.locator.strategy}: {field.locator.value}</code></p>)}</div><div><h3>Values chosen and why</h3>{result.plan.filter(action=>action.action==='fill').map((action,index)=>{const evidence=result.fieldComparisons.find(row=>row.valueKey===action.valueKey&&row.english.locator.value===action.locator.value);return <p key={`${action.valueKey}-${index}`}><b>{action.valueKey}: {evidence?.arabic.value||'value resolved from market pack'}</b><span>{action.reason}</span></p>})}</div></div><div className="decision-list"><h3>Decisions taken</h3>{result.plan.map((action,index)=><div key={`${action.action}-${index}`}><span>{index+1}</span><code>{action.action} · {action.locator.strategy}={action.locator.value}</code><p>{action.reason}</p></div>)}</div><div className="plan-diff"><div><small>Deterministic plan</small><strong>{result.deterministicPlan.length} mapped actions</strong></div><div><small>Adaptive-only plan</small><strong>{adaptiveOnly.length} grounded decisions</strong></div><p>{adaptiveOnly.length?adaptiveOnly.map(action=>`${action.action} ${action.locator.value}`).join(' · '):'The adaptive and deterministic action sets were equivalent for this standard form.'}</p></div></section>}
-function Results({result}:{result:Result}){const first=result.findings[0];return <section className="results"><aside><div className={result.findings.length?'verdict bad':'verdict good'}><small>Tested flow verdict</small><h1>{result.verdict}</h1><p>{result.findings.length?'Evidence-backed issues can prevent Saudi users from completing this tested flow.':'No blockers were observed within the bounded checks that ran.'}</p></div>{result.findings.map((f,i)=><article key={f.id}><span>{i+1}</span><div><b>{f.title}</b><p>{f.summary}</p></div><em>{f.severity}</em></article>)}<div className="planner">Planner: <b>{result.planner}</b>{result.fallbackReason?<p className="fallback-reason"><strong>Fallback reason:</strong> {result.fallbackReason}</p>:<p className="adaptive-ok">Adaptive planner completed without fallback.</p>}</div></aside><div className="detail"><div className="planner-log"><div><b>Planner run log</b><span>{result.planner}</span></div><ol>{result.plannerLog.map((entry,index)=><li key={`${index}-${entry}`}>{entry}</li>)}</ol></div><WhyGptPanel result={result}/><div className="comparison"><figure><figcaption>English persona · en-US</figcaption><img src={result.screenshots.baseline}/><p>{result.comparison.english}</p></figure><figure><figcaption>Arabic persona · ar-SA</figcaption><img src={result.screenshots.arabic}/><p>{result.comparison.arabic}</p></figure></div><FieldComparisonTable rows={result.fieldComparisons}/>{first?<><div className="evidence"><div><small>DOM locator</small><code>{first.locator.strategy}: {first.locator.value}</code></div><div><small>Business impact</small><p>{first.impact}</p></div><div><small>Expected</small><p>{first.expected}</p></div><div><small>Actual</small><p>{first.actual}</p></div></div><div className="code-head"><b>Generated regression test</b><button onClick={()=>navigator.clipboard.writeText(first.generatedTest)}>Copy</button></div><pre><code>{first.generatedTest}</code></pre></>:<div className="empty"><h2>No blockers found in tested flows</h2><p>This means only that the bounded checks completed without evidence of a blocker. It is not a readiness certificate.</p></div>}</div></section>}
-createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);
+import React, { useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
+import "./styles.css";
+import "./planner.css";
+type FieldEvidence = {
+  value: string;
+  actual: string;
+  accepted: boolean;
+  validationMessage: string;
+  locator: { strategy: string; value: string };
+};
+type PlanAction = {
+  action: "fill" | "click" | "observe";
+  fieldPurpose: string | null;
+  valueKey: string | null;
+  reason: string;
+  locator: { strategy: string; value: string };
+};
+type Result = {
+  status: string;
+  verdict: string;
+  url: string;
+  market: MarketSummary;
+  planner: string;
+  fallbackReason: string | null;
+  plannerLog: string[];
+  allowSubmission: boolean;
+  benchmarkEvaluation: null | {
+    groundTruthBlockers: number;
+    detectedBlockers: number;
+    failingTestCases: number;
+    truePositives: number;
+    falsePositives: number;
+    falseNegatives: number;
+    precision: number;
+    recall: number;
+    submissionAttempted: boolean;
+    flowCompleted: boolean;
+  };
+  supportMessage?: string;
+  fields: Array<{
+    type: string;
+    label: string;
+    name: string;
+    placeholder: string;
+    locator: { strategy: string; value: string };
+  }>;
+  plan: PlanAction[];
+  deterministicPlan: PlanAction[];
+  findings: Array<{
+    id: string;
+    title: string;
+    severity: string;
+    summary: string;
+    impact: string;
+    actual: string;
+    expected: string;
+    locator: { strategy: string; value: string };
+    evidenceScreenshot: string;
+    generatedTest: string;
+    testCases: Array<{
+      checkId: string;
+      valueKey: string;
+      value: string;
+      actual: string;
+    }>;
+  }>;
+  passes: Array<{
+    checkId: string;
+    valueKey: string;
+    locator: { strategy: string; value: string };
+    actual: string;
+  }>;
+  fieldComparisons: Array<{
+    checkId: string;
+    fieldPurpose: string;
+    valueKey: string;
+    classification: "market-specific" | "general-form-issue" | "pass";
+    english: FieldEvidence;
+    arabic: FieldEvidence;
+    evidence: { englishScreenshot: string; arabicScreenshot: string };
+  }>;
+  screenshots: { baseline: string; arabic: string };
+  comparison: { english: string; arabic: string };
+};
+type MarketSummary = {
+  id: string;
+  label: string;
+  shortLabel: string;
+  locale: string;
+  currency: string;
+};
+type ProgressEvent = {
+  sequence: number;
+  step: number;
+  totalSteps: number | null;
+  type:
+    "status" | "planner" | "action" | "finding" | "graceful-exit" | "complete";
+  message: string;
+  planner: string;
+  timestamp: string;
+};
+type Job = {
+  status: "queued" | "running" | "completed" | "unsupported" | "failed";
+  events: ProgressEvent[];
+  result?: Result;
+  error?: string;
+};
+const stages = [
+  "Safe URL check",
+  "Browser launch",
+  "DOM analysis",
+  "English baseline",
+  "Arabic persona test",
+];
+function LiveProgress({
+  events,
+  status,
+}: {
+  events: ProgressEvent[];
+  status: string;
+}) {
+  const latest = events.at(-1);
+  return (
+    <section className="live-progress" aria-live="polite">
+      <div className="live-progress-head">
+        <div>
+          <small>Live audit progress</small>
+          <h2>{latest?.message || "Audit queued…"}</h2>
+        </div>
+        <div className="progress-meta">
+          <strong>
+            {latest
+              ? `Step ${latest.step}/${latest.totalSteps ?? "?"}`
+              : "Step 0/?"}
+          </strong>
+          <span>Planner: {latest?.planner || "pending"}</span>
+        </div>
+      </div>
+      <div className="progress-track">
+        <i
+          style={{
+            width: latest?.totalSteps
+              ? `${Math.min(100, (latest.step / latest.totalSteps) * 100)}%`
+              : "8%",
+          }}
+        />
+      </div>
+      <ol>
+        {events.map((event) => (
+          <li className={event.type} key={event.sequence}>
+            <span>
+              {event.type === "finding"
+                ? "!"
+                : event.type === "graceful-exit"
+                  ? "×"
+                  : "✓"}
+            </span>
+            <div>
+              <b>{event.message}</b>
+              <small>
+                Step {event.step}/{event.totalSteps ?? "?"} · {event.planner}
+              </small>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {status === "running" && (
+        <p className="still-running">
+          The audit continues server-side. Keep this tab open to see each
+          decision.
+        </p>
+      )}
+    </section>
+  );
+}
+function App() {
+  const [url, setUrl] = useState("");
+  const [markets, setMarkets] = useState<MarketSummary[]>([]);
+  const [marketId, setMarketId] = useState("saudi-arabia");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<Result | null>(null);
+  const [error, setError] = useState("");
+  const [events, setEvents] = useState<ProgressEvent[]>([]);
+  const [jobStatus, setJobStatus] = useState("idle");
+  useEffect(() => {
+    void fetch("/api/markets")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Market packs could not be loaded.");
+        setMarkets(await response.json());
+      })
+      .catch((error) =>
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Market packs could not be loaded.",
+        ),
+      );
+  }, []);
+  const selectedMarket = markets.find((market) => market.id === marketId) || {
+    id: "saudi-arabia",
+    label: "Saudi Arabia",
+    shortLabel: "Saudi",
+    locale: "ar-SA",
+    currency: "SAR",
+  };
+  async function run() {
+    setLoading(true);
+    setError("");
+    setResult(null);
+    setEvents([]);
+    setJobStatus("queued");
+    try {
+      const parsed = new URL(url);
+      const allowSubmission =
+        parsed.origin === location.origin &&
+        parsed.pathname.startsWith("/demo");
+      const response = await fetch("/api/audit-jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url, allowSubmission, marketId }),
+      });
+      const created = await response.json();
+      if (!response.ok)
+        throw new Error(created.error || "Audit could not be queued safely.");
+      for (let attempt = 0; attempt < 360; attempt++) {
+        const poll = await fetch(created.pollUrl, { cache: "no-store" });
+        const job = (await poll.json()) as Job;
+        if (!poll.ok) throw new Error(job.error || "Audit progress expired.");
+        setEvents(job.events || []);
+        setJobStatus(job.status);
+        if (job.status === "completed" || job.status === "unsupported") {
+          if (job.result) setResult(job.result);
+          return;
+        }
+        if (job.status === "failed")
+          throw new Error(
+            job.error || job.events.at(-1)?.message || "Audit stopped safely.",
+          );
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      throw new Error("Audit progress polling timed out safely.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Audit failed safely.");
+      setJobStatus("failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+  const timelineDone = result?.status === "completed";
+  const timelineStopped = result?.status === "unsupported";
+  return (
+    <>
+      <header>
+        <div className="brand">
+          <span className="mark">ع</span>Arabic Market Blocker Agent
+        </div>
+        <a href="#scope">Scope</a>
+      </header>
+      <main>
+        <section className="runner">
+          <label htmlFor="url">Public signup form URL</label>
+          <div className="run-row">
+            <input
+              id="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://example.com/signup"
+            />
+            <select
+              aria-label="Market"
+              value={marketId}
+              onChange={(event) => setMarketId(event.target.value)}
+            >
+              {markets.map((market) => (
+                <option value={market.id} key={market.id}>
+                  {market.label}
+                </option>
+              ))}
+            </select>
+            <button onClick={run} disabled={loading || !url}>
+              {loading
+                ? "Audit running live…"
+                : `Run ${selectedMarket.shortLabel} signup audit`}
+            </button>
+          </div>
+          <p className="limits">
+            ◈ Public signup forms only · No CAPTCHA · No auth wall · Submission
+            enabled only for the owned /demo benchmark
+          </p>
+        </section>
+        <section className="timeline">
+          {stages.map((s, i) => (
+            <div
+              className={loading ? "active" : timelineDone ? "done" : ""}
+              key={s}
+            >
+              <span>{timelineDone ? "✓" : i + 1}</span>
+              <b>{s}</b>
+              <small>
+                {timelineDone
+                  ? "Completed"
+                  : timelineStopped
+                    ? "Stopped safely"
+                    : loading
+                      ? "Streaming"
+                      : "Bounded step"}
+              </small>
+            </div>
+          ))}
+        </section>
+        {(loading || events.length > 0) && (
+          <LiveProgress events={events} status={jobStatus} />
+        )}{" "}
+        {error && (
+          <section className="unsupported">
+            <strong>Audit stopped safely</strong>
+            <p>
+              {events.at(-1)?.type === "graceful-exit"
+                ? events.at(-1)?.message
+                : error}
+            </p>
+            <span>
+              The streamed reason above is the exact graceful-exit reason.
+            </span>
+          </section>
+        )}
+        {result && result.status === "unsupported" && (
+          <section className="unsupported">
+            <strong>Unsupported site</strong>
+            <p>{result.supportMessage}</p>
+            <span>
+              This is an intentional bounded fallback, not a failed run.
+            </span>
+          </section>
+        )}
+        {result && result.status === "completed" && <Results result={result} />}
+        <section id="scope" className="scope">
+          <h2>Intentionally bounded</h2>
+          <p>
+            One public standard signup flow, one selected market rule pack, no
+            CAPTCHA bypass, no authentication wall, no payment, and no claim of
+            certification.
+          </p>
+        </section>
+      </main>
+      <footer>
+        Safe URL resolution · Private IP blocking · Hard timeout · Rate limited
+      </footer>
+    </>
+  );
+}
+function FieldComparisonTable({ result }: { result: Result }) {
+  return (
+    <div className="field-comparisons">
+      <div className="field-comparison-head">
+        <b>Per-field control comparison</b>
+        <span>Two isolated browser contexts</span>
+      </div>
+      {result.fieldComparisons.map((row, index) => (
+        <div className="field-comparison-row" key={`${row.valueKey}-${index}`}>
+          <div>
+            <b>{row.fieldPurpose}</b>
+            <code>
+              {row.english.locator.strategy}: {row.english.locator.value}
+            </code>
+            <span className={`classification ${row.classification}`}>
+              {row.classification.replaceAll("-", " ")}
+            </span>
+          </div>
+          <PersonaState
+            label="English persona · en-US"
+            evidence={row.english}
+          />
+          <PersonaState
+            label={`${result.market.shortLabel} persona · ${result.market.locale}`}
+            evidence={row.arabic}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+function PersonaState({
+  label,
+  evidence,
+}: {
+  label: string;
+  evidence: FieldEvidence;
+}) {
+  return (
+    <div
+      className={
+        evidence.accepted ? "persona-state accepted" : "persona-state rejected"
+      }
+    >
+      <small>{label}</small>
+      <strong>{evidence.accepted ? "Accepted" : "Rejected"}</strong>
+      <code>Value: {evidence.value}</code>
+      {evidence.validationMessage ? (
+        <p>{evidence.validationMessage}</p>
+      ) : (
+        <p>Value preserved; no validation error.</p>
+      )}
+    </div>
+  );
+}
+function WhyGptPanel({ result }: { result: Result }) {
+  const fallbackKeys = new Set(
+    result.deterministicPlan.map(
+      (action) =>
+        `${action.action}:${action.locator.strategy}:${action.locator.value}:${action.valueKey}`,
+    ),
+  );
+  const adaptiveOnly = result.plan.filter(
+    (action) =>
+      !fallbackKeys.has(
+        `${action.action}:${action.locator.strategy}:${action.locator.value}:${action.valueKey}`,
+      ),
+  );
+  return (
+    <section className="why-gpt">
+      <div className="why-gpt-title">
+        <div>
+          <small>Adaptive planning evidence</small>
+          <h2>Why GPT-5.6 mattered</h2>
+        </div>
+        <span>
+          {result.plan.length} decisions · {adaptiveOnly.length} beyond fallback
+        </span>
+      </div>
+      <div className="why-grid">
+        <div>
+          <h3>Fields identified</h3>
+          {result.fields.map((field, index) => (
+            <p key={`${field.name}-${index}`}>
+              <b>{field.label || field.name || field.type}</b>
+              <code>
+                {field.locator.strategy}: {field.locator.value}
+              </code>
+            </p>
+          ))}
+        </div>
+        <div>
+          <h3>Values chosen and why</h3>
+          {result.plan
+            .filter((action) => action.action === "fill")
+            .map((action, index) => {
+              const evidence = result.fieldComparisons.find(
+                (row) =>
+                  row.valueKey === action.valueKey &&
+                  row.english.locator.value === action.locator.value,
+              );
+              return (
+                <p key={`${action.valueKey}-${index}`}>
+                  <b>
+                    {action.valueKey}:{" "}
+                    {evidence?.arabic.value ||
+                      "value resolved from market pack"}
+                  </b>
+                  <span>{action.reason}</span>
+                </p>
+              );
+            })}
+        </div>
+      </div>
+      <div className="decision-list">
+        <h3>Decisions taken</h3>
+        {result.plan.map((action, index) => (
+          <div key={`${action.action}-${index}`}>
+            <span>{index + 1}</span>
+            <code>
+              {action.action} · {action.locator.strategy}={action.locator.value}
+            </code>
+            <p>{action.reason}</p>
+          </div>
+        ))}
+      </div>
+      <div className="plan-diff">
+        <div>
+          <small>Deterministic plan</small>
+          <strong>{result.deterministicPlan.length} mapped actions</strong>
+        </div>
+        <div>
+          <small>Adaptive-only plan</small>
+          <strong>{adaptiveOnly.length} grounded decisions</strong>
+        </div>
+        <p>
+          {adaptiveOnly.length
+            ? adaptiveOnly
+                .map((action) => `${action.action} ${action.locator.value}`)
+                .join(" · ")
+            : "The adaptive and deterministic action sets were equivalent for this standard form."}
+        </p>
+      </div>
+    </section>
+  );
+}
+function Results({ result }: { result: Result }) {
+  const first = result.findings[0];
+  return (
+    <section className="results">
+      <aside>
+        <div
+          className={result.findings.length ? "verdict bad" : "verdict good"}
+        >
+          <small>Tested flow verdict</small>
+          <h1>{result.verdict}</h1>
+          <p>
+            {result.findings.length
+              ? `Evidence-backed issues can prevent ${result.market.label} users from completing this tested flow.`
+              : "No blockers were observed within the bounded checks that ran."}
+          </p>
+        </div>
+        {result.findings.map((f, i) => (
+          <article key={f.id}>
+            <span>{i + 1}</span>
+            <div>
+              <b>{f.title}</b>
+              <p>{f.summary}</p>
+            </div>
+            <em>{f.severity}</em>
+          </article>
+        ))}
+        <div className="planner">
+          Planner: <b>{result.planner}</b>
+          {result.fallbackReason ? (
+            <p className="fallback-reason">
+              <strong>Fallback reason:</strong> {result.fallbackReason}
+            </p>
+          ) : (
+            <p className="adaptive-ok">
+              Adaptive planner completed without fallback.
+            </p>
+          )}
+        </div>
+      </aside>
+      <div className="detail">
+        <div className="planner-log">
+          <div>
+            <b>Planner run log</b>
+            <span>{result.planner}</span>
+          </div>
+          <ol>
+            {result.plannerLog.map((entry, index) => (
+              <li key={`${index}-${entry}`}>{entry}</li>
+            ))}
+          </ol>
+        </div>
+        <WhyGptPanel result={result} />
+        <div className="comparison">
+          <figure>
+            <figcaption>English persona · en-US</figcaption>
+            <img src={result.screenshots.baseline} />
+            <p>{result.comparison.english}</p>
+          </figure>
+          <figure>
+            <figcaption>
+              {result.market.shortLabel} persona · {result.market.locale}
+            </figcaption>
+            <img src={result.screenshots.arabic} />
+            <p>{result.comparison.arabic}</p>
+          </figure>
+        </div>
+        <FieldComparisonTable result={result} />
+        {first ? (
+          <>
+            <div className="evidence">
+              <div>
+                <small>DOM locator</small>
+                <code>
+                  {first.locator.strategy}: {first.locator.value}
+                </code>
+              </div>
+              <div>
+                <small>Business impact</small>
+                <p>{first.impact}</p>
+              </div>
+              <div>
+                <small>Expected</small>
+                <p>{first.expected}</p>
+              </div>
+              <div>
+                <small>Actual</small>
+                <p>{first.actual}</p>
+              </div>
+            </div>
+            <div className="code-head">
+              <b>Generated regression test</b>
+              <button
+                onClick={() =>
+                  navigator.clipboard.writeText(first.generatedTest)
+                }
+              >
+                Copy
+              </button>
+            </div>
+            <pre>
+              <code>{first.generatedTest}</code>
+            </pre>
+          </>
+        ) : (
+          <div className="empty">
+            <h2>No blockers found in tested flows</h2>
+            <p>
+              This means only that the bounded checks completed without evidence
+              of a blocker. It is not a readiness certificate.
+            </p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

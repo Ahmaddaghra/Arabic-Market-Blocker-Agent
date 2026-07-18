@@ -1,6 +1,6 @@
 # Arabic Market Blocker Agent
 
-A bounded developer tool that tests one standard, public signup form with a Saudi market persona, compares the English baseline with the Arabic input path, records screenshot and DOM-locator evidence, and turns confirmed blockers into grounded Playwright regression tests.
+A bounded developer tool that tests one standard, public signup form with a selected Arab-market persona, compares the English baseline with the Arabic input path, records screenshot and DOM-locator evidence, and turns confirmed blockers into grounded Playwright regression tests.
 
 The verdict language is deliberately narrow: **Found N blockers** or **No blockers found in tested flows**. The project does not certify a product or claim broad market readiness.
 
@@ -26,11 +26,16 @@ The centerpiece target uses unconventional labels and a second step revealed onl
 
 - Public, standard signup forms
 - No CAPTCHA, authentication wall, payment, or destructive submission
-- One Saudi Arabia rule pack in `data/markets/saudi-arabia.json`
+- One selected market rule pack per audit
 - At most ten documented checks
 - Hard navigation timeout and bounded plan size
 
-Adding another market is intentionally a data change: add one versioned JSON rule pack beside `data/markets/saudi-arabia.json`. The MVP does not introduce a persona engine or market-specific application architecture.
+## Markets
+
+- **Saudi Arabia** — `data/markets/saudi-arabia.json` (`ar-SA`, SAR)
+- **United Arab Emirates** — `data/markets/united-arab-emirates.json` (`ar-AE`, AED)
+
+Market packs are discovered and schema-validated dynamically from `data/markets`. **Adding a market is one JSON file**: adding a third valid pack requires zero application-code changes. The MVP does not introduce a persona engine or market-specific application architecture.
 
 Unsupported pages stop with a clear explanation. The runner never attempts CAPTCHA bypass or credentialed flows.
 
