@@ -1,134 +1,32 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "recordedAt": "2026-07-18T04:27:00+03:00",
   "target": "https://arabic-market-blocker-agent.onrender.com/demo/",
-  "request": {
-    "method": "POST",
-    "endpoint": "https://arabic-market-blocker-agent.onrender.com/api/audits",
-    "body": {
-      "url": "https://arabic-market-blocker-agent.onrender.com/demo/",
-      "allowSubmission": true
-    }
-  },
   "result": {
     "status": "completed",
-    "verdict": "Found 2 unique blockers across 6 failing test cases",
+    "verdict": "Found 2 unique blockers across 5 failing test cases",
     "planner": "gpt-5.6-sol-adaptive",
     "fallbackReason": null,
-    "allowSubmission": true,
-    "benchmarkEvaluation": {
-      "groundTruthBlockers": 2,
-      "detectedBlockers": 2,
-      "failingTestCases": 6,
-      "truePositives": 2,
-      "falsePositives": 0,
-      "falseNegatives": 0,
-      "precision": 1,
-      "recall": 1,
-      "submissionAttempted": true,
-      "flowCompleted": false
-    },
-    "findings": [
-      {
-        "id": "cc2f692c-a336-41ae-8d76-b9362d167055",
-        "rootCauseId": "name-ascii-only",
-        "title": "Arabic and mixed-script names are rejected",
-        "severity": "blocker",
-        "checkId": "arabic-name",
-        "summary": "Only English letters are allowed",
-        "impact": "A Saudi user may be unable to complete signup.",
-        "actual": "Only English letters are allowed",
-        "expected": "Accept Saudi-market values",
-        "locator": {
-          "strategy": "label",
-          "value": "Full name"
-        },
-        "evidenceScreenshot": "/artifacts/ea5e33ad-bf7c-4913-845c-067e498f52b8-arabic.png",
-        "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"Arabic and mixed-script names are rejected\", async ({ page }) => {\n  await page.goto(\"https://arabic-market-blocker-agent.onrender.com/demo/\");\n  const field = page.getByLabel(\"Full name\");\n  await field.fill(\"عبد الرحمن بن خالد العتيبي\");\n  await field.blur();\n  await expect(field).toHaveValue(\"عبد الرحمن بن خالد العتيبي\");\n  await expect(page.getByText(\"Only English letters are allowed\", { exact: false })).not.toBeVisible();\n});\n",
-        "testCases": [
-          {
-            "checkId": "arabic-name",
-            "valueKey": "fullName",
-            "value": "عبد الرحمن بن خالد العتيبي",
-            "actual": "Only English letters are allowed"
-          },
-          {
-            "checkId": "mixed-bidi",
-            "valueKey": "mixedName",
-            "value": "عبد الرحمن Alotaibi",
-            "actual": "Only English letters are allowed"
-          },
-          {
-            "checkId": "arabic-name",
-            "valueKey": "fullName",
-            "value": "عبد الرحمن بن خالد العتيبي",
-            "actual": "Only English letters are allowed"
-          }
-        ]
-      },
-      {
-        "id": "b39b6102-e581-4096-bdb7-54a463354b41",
-        "rootCauseId": "phone-us-only",
-        "title": "Saudi phone formats are rejected",
-        "severity": "blocker",
-        "checkId": "phone-local",
-        "summary": "Enter a valid US phone number",
-        "impact": "A Saudi user may be unable to complete signup.",
-        "actual": "Enter a valid US phone number",
-        "expected": "Accept Saudi-market values",
-        "locator": {
-          "strategy": "label",
-          "value": "Phone number"
-        },
-        "evidenceScreenshot": "/artifacts/ea5e33ad-bf7c-4913-845c-067e498f52b8-arabic.png",
-        "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"Saudi phone formats are rejected\", async ({ page }) => {\n  await page.goto(\"https://arabic-market-blocker-agent.onrender.com/demo/\");\n  const field = page.getByLabel(\"Phone number\");\n  await field.fill(\"0551234567\");\n  await field.blur();\n  await expect(field).toHaveValue(\"0551234567\");\n  await expect(page.getByText(\"Enter a valid US phone number\", { exact: false })).not.toBeVisible();\n});\n",
-        "testCases": [
-          {
-            "checkId": "phone-local",
-            "valueKey": "phoneLocal",
-            "value": "0551234567",
-            "actual": "Enter a valid US phone number"
-          },
-          {
-            "checkId": "arabic-indic-digits",
-            "valueKey": "arabicIndicDigits",
-            "value": "٠٥٥١٢٣٤٥٦٧",
-            "actual": "Enter a valid US phone number"
-          },
-          {
-            "checkId": "phone-international",
-            "valueKey": "phoneInternational",
-            "value": "+966551234567",
-            "actual": "Enter a valid US phone number"
-          }
-        ]
-      }
+    "benchmarkEvaluation": {"groundTruthBlockers":2,"detectedBlockers":2,"failingTestCases":5,"truePositives":2,"falsePositives":0,"falseNegatives":0,"precision":1,"recall":1,"submissionAttempted":true,"flowCompleted":false},
+    "fieldComparisons": [
+      {"field":"Full name","valueKey":"fullName","english":"accepted","arabic":"rejected","classification":"market-specific"},
+      {"field":"Full name","valueKey":"mixedName","english":"accepted","arabic":"rejected","classification":"market-specific"},
+      {"field":"Work email","valueKey":"email","english":"accepted","arabic":"accepted","classification":"pass"},
+      {"field":"Phone number","valueKey":"phoneLocal","english":"accepted","arabic":"rejected","classification":"market-specific"},
+      {"field":"Phone number","valueKey":"arabicIndicDigits","english":"accepted","arabic":"rejected","classification":"market-specific"},
+      {"field":"Phone number","valueKey":"phoneInternational","english":"accepted","arabic":"rejected","classification":"market-specific"},
+      {"field":"Password","valueKey":"password","english":"accepted","arabic":"accepted","classification":"pass"}
     ],
-    "passes": [],
-    "supportMessage": null,
     "plannerLog": [
-      "Planner request started: model=gpt-5.6, fields=4, buttons=1, allowSubmission=true, timeout=90000ms",
-      "Planner response received: id=resp_0cc84ad3c0ee7d3e006a5ac88e2d88819bbbbb862884da5250, model=gpt-5.6-sol, supported=true, actions=11",
-      "Planner assessment: Supplied labeled field locators and submit button are sufficient for a bounded Saudi-Arabic audit. The Latin-script email serves as the limited English control; no fully English name persona was supplied.",
-      "Decision 1: fill Test Arabic Unicode and long compound name handling with fullName via label=Full name; reason=Enter the Saudi Arabic name.",
-      "Decision 2: fill Test Saudi local phone acceptance with phoneLocal via label=Phone number; reason=Enter the local-format number.",
-      "Decision 3: observe Inspect local-phone validation, direction, and alignment via label=Phone number; reason=Record visible field state and localized validation after focus moves.",
-      "Decision 4: fill Test mixed Arabic/English bidirectional text with mixedName via label=Full name; reason=Replace the name with mixed-script input.",
-      "Decision 5: fill Test Arabic-Indic numeral handling with arabicIndicDigits via label=Phone number; reason=Replace the phone with Arabic-Indic digits.",
-      "Decision 6: observe Inspect mixed-script and Arabic-Indic handling via label=Phone number; reason=Record rendering, direction, alignment, and validation.",
-      "Decision 7: fill Set final Arabic name with fullName via label=Full name; reason=Restore valid Saudi persona data for submission.",
-      "Decision 8: fill Set final international Saudi phone with phoneInternational via label=Phone number; reason=Verify and submit using international format.",
-      "Decision 9: fill Provide Latin-script email control with email via label=Work email; reason=Populate the required email and provide a limited English-script baseline.",
-      "Decision 10: fill Provide required password with password via label=Password; reason=Complete required signup data.",
-      "Decision 11: click Verify signup flow completion via role=Create account; reason=Perform the single permitted final submission click without bypassing CAPTCHA or authentication.",
-      "Execution fill: valueKey=fullName, locator=label=Full name, validation=Only English letters are allowed",
-      "Execution fill: valueKey=phoneLocal, locator=label=Phone number, validation=Enter a valid US phone number",
-      "Execution fill: valueKey=mixedName, locator=label=Full name, validation=Only English letters are allowed",
-      "Execution fill: valueKey=arabicIndicDigits, locator=label=Phone number, validation=Enter a valid US phone number",
-      "Execution fill: valueKey=fullName, locator=label=Full name, validation=Only English letters are allowed",
-      "Execution fill: valueKey=phoneInternational, locator=label=Phone number, validation=Enter a valid US phone number",
-      "Execution fill: valueKey=email, locator=label=Work email, validation=accepted",
-      "Execution fill: valueKey=password, locator=label=Password, validation=accepted",
-      "Execution click: role=Create account; flowCompleted=false"
+      "Planner response received: id=resp_014a94196f8f4663006a5ad5e646ec819abf65a53a30fe2825, model=gpt-5.6-sol, supported=true, actions=8",
+      "Execution comparison: valueKey=fullName, locator=label=Full name, EN=accepted, AR=Only English letters are allowed, classification=market-specific",
+      "Execution comparison: valueKey=mixedName, locator=label=Full name, EN=accepted, AR=Only English letters are allowed, classification=market-specific",
+      "Execution comparison: valueKey=email, locator=label=Work email, EN=accepted, AR=accepted, classification=pass",
+      "Execution comparison: valueKey=phoneLocal, locator=label=Phone number, EN=accepted, AR=Enter a valid US phone number, classification=market-specific",
+      "Execution comparison: valueKey=arabicIndicDigits, locator=label=Phone number, EN=accepted, AR=Enter a valid US phone number, classification=market-specific",
+      "Execution comparison: valueKey=phoneInternational, locator=label=Phone number, EN=accepted, AR=Enter a valid US phone number, classification=market-specific",
+      "Execution comparison: valueKey=password, locator=label=Password, EN=accepted, AR=accepted, classification=pass",
+      "Execution click: locator=role=Create account, EN=executed, AR=executed, submissionControl=true, flowCompleted=false"
     ]
   }
 }

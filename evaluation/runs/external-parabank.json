@@ -1,93 +1,33 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "recordedAt": "2026-07-18T04:24:00+03:00",
   "target": "https://parabank.parasoft.com/parabank/register.htm",
-  "request": {
-    "method": "POST",
-    "endpoint": "https://arabic-market-blocker-agent.onrender.com/api/audits",
-    "body": {
-      "url": "https://parabank.parasoft.com/parabank/register.htm",
-      "allowSubmission": false
-    }
-  },
+  "request": {"endpoint":"https://arabic-market-blocker-agent.onrender.com/api/audits","allowSubmission":false},
   "result": {
     "status": "completed",
     "verdict": "No blockers found in tested flows; 5 Saudi-market checks passed",
     "planner": "gpt-5.6-sol-adaptive",
     "fallbackReason": null,
-    "allowSubmission": false,
-    "benchmarkEvaluation": null,
     "findings": [],
-    "passes": [
-      {
-        "checkId": "arabic-name",
-        "valueKey": "fullName",
-        "locator": {
-          "strategy": "name",
-          "value": "customer.firstName"
-        },
-        "actual": "عبد الرحمن بن خالد العتيبي"
-      },
-      {
-        "checkId": "mixed-bidi",
-        "valueKey": "mixedName",
-        "locator": {
-          "strategy": "name",
-          "value": "customer.lastName"
-        },
-        "actual": "عبد الرحمن Alotaibi"
-      },
-      {
-        "checkId": "phone-local",
-        "valueKey": "phoneLocal",
-        "locator": {
-          "strategy": "name",
-          "value": "customer.phoneNumber"
-        },
-        "actual": "0551234567"
-      },
-      {
-        "checkId": "phone-international",
-        "valueKey": "phoneInternational",
-        "locator": {
-          "strategy": "name",
-          "value": "customer.phoneNumber"
-        },
-        "actual": "+966551234567"
-      },
-      {
-        "checkId": "arabic-indic-digits",
-        "valueKey": "arabicIndicDigits",
-        "locator": {
-          "strategy": "name",
-          "value": "customer.phoneNumber"
-        },
-        "actual": "٠٥٥١٢٣٤٥٦٧"
-      }
+    "namedPasses": 5,
+    "fieldComparisons": [
+      {"field":"customer.firstName","valueKey":"fullName","english":{"value":"John Smith","accepted":true},"arabic":{"value":"عبد الرحمن بن خالد العتيبي","accepted":true},"classification":"pass"},
+      {"field":"customer.lastName","valueKey":"mixedName","english":{"value":"John Smith","accepted":true},"arabic":{"value":"عبد الرحمن Alotaibi","accepted":true},"classification":"pass"},
+      {"field":"customer.address.city","valueKey":"city","english":{"value":"New York","accepted":true},"arabic":{"value":"الرياض","accepted":true},"classification":"pass"},
+      {"field":"customer.phoneNumber","valueKey":"phoneLocal","english":{"value":"+14155552671","accepted":true},"arabic":{"value":"0551234567","accepted":true},"classification":"pass"},
+      {"field":"customer.phoneNumber","valueKey":"phoneInternational","english":{"value":"+14155552671","accepted":true},"arabic":{"value":"+966551234567","accepted":true},"classification":"pass"},
+      {"field":"customer.phoneNumber","valueKey":"arabicIndicDigits","english":{"value":"+14155552671","accepted":true},"arabic":{"value":"٠٥٥١٢٣٤٥٦٧","accepted":true},"classification":"pass"}
     ],
-    "supportMessage": null,
     "plannerLog": [
-      "Planner request started: model=gpt-5.6, fields=15, buttons=2, allowSubmission=false, timeout=90000ms",
-      "Planner response received: id=resp_0d5ac250ea003def006a5acb4d8474819aa07705c84279afed, model=gpt-5.6-sol, supported=true, actions=12",
-      "Planner assessment: A bounded, non-submitting audit can compare Latin-script control input with Saudi Arabic, mixed-BiDi, city, and phone formats using supplied locators. Flow completion and submit-triggered validation cannot be tested because allowSubmission=false and submit/create-account controls must not be clicked.",
-      "Decision 1: fill English baseline control with email via name=customer.username; reason=Use a Latin-script value as the English/control comparison without submitting.",
-      "Decision 2: fill First name with fullName via name=customer.firstName; reason=Check Arabic Unicode acceptance and long compound-name rendering.",
-      "Decision 3: observe First name via name=customer.firstName; reason=Inspect retained value, direction, alignment, clipping, and any inline localized validation.",
-      "Decision 4: fill Last name with mixedName via name=customer.lastName; reason=Check mixed Arabic/English BiDi handling.",
-      "Decision 5: observe Last name via name=customer.lastName; reason=Inspect visual ordering, direction, alignment, and value retention.",
-      "Decision 6: fill City with city via name=customer.address.city; reason=Check Arabic place-name acceptance.",
-      "Decision 7: fill Phone number with phoneLocal via name=customer.phoneNumber; reason=Check Saudi local phone-format acceptance.",
-      "Decision 8: observe Phone number via name=customer.phoneNumber; reason=Inspect retention, formatting, direction, and inline validation for the local format.",
-      "Decision 9: fill Phone number with phoneInternational via name=customer.phoneNumber; reason=Check Saudi international phone-format acceptance by replacing the local value.",
-      "Decision 10: observe Phone number via name=customer.phoneNumber; reason=Inspect retention, formatting, direction, and inline validation for the international format.",
-      "Decision 11: fill Phone number with arabicIndicDigits via name=customer.phoneNumber; reason=Check Arabic-Indic numeral handling by replacing the prior phone value.",
-      "Decision 12: observe Phone number via name=customer.phoneNumber; reason=Inspect numeral preservation or normalization and any inline localized validation; do not submit.",
-      "Execution fill: valueKey=email, locator=name=customer.username, validation=accepted",
-      "Execution fill: valueKey=fullName, locator=name=customer.firstName, validation=accepted",
-      "Execution fill: valueKey=mixedName, locator=name=customer.lastName, validation=accepted",
-      "Execution fill: valueKey=city, locator=name=customer.address.city, validation=accepted",
-      "Execution fill: valueKey=phoneLocal, locator=name=customer.phoneNumber, validation=accepted",
-      "Execution fill: valueKey=phoneInternational, locator=name=customer.phoneNumber, validation=accepted",
-      "Execution fill: valueKey=arabicIndicDigits, locator=name=customer.phoneNumber, validation=accepted"
+      "Planner response received: id=resp_048962855268f003006a5ad55d65588198ba66b63149e0c8b1, model=gpt-5.6-sol, supported=true, actions=9",
+      "Execution comparison: valueKey=fullName, locator=name=customer.firstName, EN=accepted, AR=accepted, classification=pass",
+      "Execution comparison: valueKey=mixedName, locator=name=customer.lastName, EN=accepted, AR=accepted, classification=pass",
+      "Execution comparison: valueKey=city, locator=name=customer.address.city, EN=accepted, AR=accepted, classification=pass",
+      "Execution comparison: valueKey=phoneLocal, locator=name=customer.phoneNumber, EN=accepted, AR=accepted, classification=pass",
+      "Execution comparison: valueKey=phoneInternational, locator=name=customer.phoneNumber, EN=accepted, AR=accepted, classification=pass",
+      "Execution comparison: valueKey=arabicIndicDigits, locator=name=customer.phoneNumber, EN=accepted, AR=accepted, classification=pass",
+      "External submission was not attempted."
     ]
-  }
+  },
+  "claimBoundary": "This external demo has no ground truth. No precision, recall, certification, or absence-of-other-blockers claim is made."
 }

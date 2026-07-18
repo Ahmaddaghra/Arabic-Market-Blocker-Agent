@@ -122,22 +122,23 @@ Observed deployed repeatability check (2026-07-18):
 
 | Run | Planner | Response ID | Unique blockers | Failing cases | Precision | Recall | Submission attempted | Flow completed |
 |---|---|---|---:|---:|---:|---:|---|---|
-| 1 | `gpt-5.6-sol-adaptive` | `resp_0cc84ad3c0ee7d3e006a5ac88e2d88819bbbbb862884da5250` | 2 | 6 | 1.0 | 1.0 | true | false |
-| 2 | `gpt-5.6-sol-adaptive` | `resp_079e8aba30fb2c78006a5ac8a39aa08198b1fe64ef95695200` | 2 | 5 | 1.0 | 1.0 | true | false |
+| 1 | `gpt-5.6-sol-adaptive` | `resp_014a94196f8f4663006a5ad5e646ec819abf65a53a30fe2825` | 2 | 5 | 1.0 | 1.0 | true | false |
+| 2 | `gpt-5.6-sol-adaptive` | `resp_0f031908e2a2357f006a5ad6303b88819a9fae9454bb9ab608` | 2 | 3 | 1.0 | 1.0 | true | false |
 
-The adaptive planner varied the order and number of repeated test cases, but it kept the unique blocker count and benchmark metrics stable. `flowCompleted: false` is the expected result for this seeded benchmark: the final submission click executed, then the seeded Arabic-name and Saudi-phone validation blockers prevented success.
+These repeatability runs used the real isolated `en-US` control and `ar-SA` persona contexts. The adaptive planner varied the order and number of repeated test cases, but it kept the unique blocker count and benchmark metrics stable. `flowCompleted: false` is the expected result for this seeded benchmark: the final submission click executed, then the seeded Arabic-name and Saudi-phone validation blockers prevented success.
 
 ## Evaluation
 
-**Evaluation summary:** 1 controlled benchmark + 3 external demo applications; 2 findings; 2 confirmed against controlled ground truth; 7 external Saudi-market pass cases; 2 unsupported runs handled gracefully, including one rejected candidate. External targets have no ground truth, so no external precision or recall is claimed.
+**Evaluation summary (re-run with the real isolated English control):** 2 controlled benchmarks + 3 external demo applications; 4 controlled findings across the two benchmark scenarios; all 4 confirmed against each scenario's documented ground truth; 6 external named Saudi-market pass cases; 2 unsupported runs handled gracefully, including one rejected candidate. External targets have no ground truth, so no external precision or recall is claimed.
 
 All external targets are public demo, sandbox, or automation-practice applications. External runs use `allowSubmission: false`; they fill and inspect fields but do not create accounts.
 
 | Target | Preflight | Adaptive result | Findings | Passes | Notes | Replayable log |
 |---|---|---|---:|---:|---|---|
 | Controlled `/demo/` | Owned benchmark; no CAPTCHA | Completed | 2 | — | Both seeded root causes confirmed; submission attempted and correctly blocked | [run log](evaluation/runs/controlled-benchmark.json) |
-| [ParaBank](https://parabank.parasoft.com/parabank/register.htm) | Public Parasoft demo; signup form; no CAPTCHA observed | Completed | 0 | 5 | Arabic name, mixed BiDi name, Saudi local/international phone, and Arabic-Indic digits retained before submission | [run log](evaluation/runs/external-parabank.json) |
-| [Automation Exercise](https://automationexercise.com/login) | Public automation-practice site; signup form; no CAPTCHA observed | Completed | 0 | 2 | Arabic and mixed BiDi names retained; phone checks unavailable on this form | [run log](evaluation/runs/external-automation-exercise.json) |
+| Controlled `/demo/adaptive/` | Owned multi-step benchmark; unconventional labels; no CAPTCHA | Completed | 2 | 2 | Fallback mapped 0/2; GPT mapped step 1, clicked Continue, replanned, and completed step 2 | [adaptive log](evaluation/runs/adaptive-multistep-gpt.json) · [fallback log](evaluation/runs/adaptive-multistep-fallback.json) |
+| [ParaBank](https://parabank.parasoft.com/parabank/register.htm) | Public Parasoft demo; signup form; no CAPTCHA observed | Completed | 0 | 5 | Real EN control and Saudi values both passed Arabic name, mixed BiDi name, Saudi local/international phone, and Arabic-Indic digit checks; city also compared but is not counted as a named pass | [run log](evaluation/runs/external-parabank.json) |
+| [Automation Exercise](https://automationexercise.com/login) | Public automation-practice site; signup form; no CAPTCHA observed | Completed | 0 | 1 | Real EN control and Saudi full name both passed; phone and completion checks unavailable | [run log](evaluation/runs/external-automation-exercise.json) |
 | [nopCommerce demo](https://demo.nopcommerce.com/register) | Official resettable demo; form visible during browser preflight | Unsupported | 0 | 0 | Render-side browser received no auditable fields; stopped instead of reporting a false pass | [run log](evaluation/runs/unsupported-nopcommerce.json) |
 
 Rejected candidate: the Magento Software Testing Board URL returned an SSL/reveal interstitial rather than signup fields. The deployed audit classified it as unsupported with zero findings and zero passes. It is not counted among the three external evaluation applications. [Rejected-candidate run log](evaluation/runs/unsupported-magento-candidate.json)
