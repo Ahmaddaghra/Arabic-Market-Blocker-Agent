@@ -1,6 +1,10 @@
 {
   "status": "completed",
-  "verdict": "Found 1 unique blocker across 3 failing test cases",
+  "verdict": "Market-specific blockers: 0 · General form issues: 1 (affect all users)",
+  "verdictCounts": {
+    "marketSpecificBlockers": 0,
+    "generalFormIssues": 1
+  },
   "url": "https://ecommerce-playground.lambdatest.io/index.php?route=account/register",
   "market": {
     "id": "saudi-arabia",

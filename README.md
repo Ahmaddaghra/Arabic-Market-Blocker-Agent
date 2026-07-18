@@ -151,7 +151,7 @@ These repeatability runs used the real isolated `en-US` control and `ar-SA` pers
 
 ## Evaluation
 
-**Evaluation summary (re-run with the real isolated English control):** 2 controlled benchmarks + 3 external demo applications; 4 controlled findings across the two benchmark scenarios; all 4 confirmed against each scenario's documented ground truth; 6 external named Saudi-market pass cases; 2 unsupported runs handled gracefully, including one rejected candidate. External targets have no ground truth, so no external precision or recall is claimed.
+**Evaluation summary (re-run with the real isolated English control):** 2 controlled benchmarks + 4 external demo applications; 4 controlled findings across the two benchmark scenarios; all 4 confirmed against each scenario's documented ground truth; 8 external named Saudi-market pass cases; 1 external general form issue; 2 unsupported runs handled gracefully, including one rejected candidate. External targets have no ground truth, so no external precision or recall is claimed.
 
 All external targets are public demo, sandbox, or automation-practice applications. External runs use `allowSubmission: false`; they fill and inspect fields but do not create accounts.
 
@@ -161,8 +161,11 @@ All external targets are public demo, sandbox, or automation-practice applicatio
 | Controlled `/demo/adaptive/` | Owned multi-step benchmark; unconventional labels; no CAPTCHA | Completed | 2 | 2 | Fallback mapped 0/2; GPT mapped step 1, clicked Continue, replanned, and completed step 2 | [adaptive log](evaluation/runs/adaptive-multistep-gpt.json) · [fallback log](evaluation/runs/adaptive-multistep-fallback.json) |
 | [ParaBank](https://parabank.parasoft.com/parabank/register.htm) | Public Parasoft demo; signup form; no CAPTCHA observed | Completed | 0 | 5 | Real EN control and Saudi values both passed Arabic name, mixed BiDi name, Saudi local/international phone, and Arabic-Indic digit checks; city also compared but is not counted as a named pass | [run log](evaluation/runs/external-parabank.json) |
 | [Automation Exercise](https://automationexercise.com/login) | Public automation-practice site; signup form; no CAPTCHA observed | Completed | 0 | 1 | Real EN control and Saudi full name both passed; phone and completion checks unavailable | [run log](evaluation/runs/external-automation-exercise.json) |
+| [LambdaTest Ecommerce Playground](https://ecommerce-playground.lambdatest.io/index.php?route=account/register) | Official automation-practice playground; public registration form; no CAPTCHA observed | Completed | 1 general issue; 0 market-specific | 2 | Arabic name and mixed BiDi values passed. Local, international, and Arabic-Indic telephone values failed, but the English `+1` control also failed, so the issue was classified as general rather than Saudi-specific. | [run log](evaluation/runs/bundled-external-lambdatest.json) · [stable report](https://arabic-market-blocker-agent.onrender.com/report/external-lambdatest) |
 | [nopCommerce demo](https://demo.nopcommerce.com/register) | Official resettable demo; form visible during browser preflight | Unsupported | 0 | 0 | Render-side browser received no auditable fields; stopped instead of reporting a false pass | [run log](evaluation/runs/unsupported-nopcommerce.json) |
 
 Rejected candidate: the Magento Software Testing Board URL returned an SSL/reveal interstitial rather than signup fields. The deployed audit classified it as unsupported with zero findings and zero passes. It is not counted among the three external evaluation applications. [Rejected-candidate run log](evaluation/runs/unsupported-magento-candidate.json)
 
 These external findings and passes are observations from bounded, non-submitting runs. They do not certify the applications or prove the absence of other blockers.
+
+The LambdaTest run demonstrates the false-positive guard: because the English control failed too, the tool refused to claim a market-specific blocker.
