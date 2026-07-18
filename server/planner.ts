@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import type {Field,PlanAction} from './types.js';
 import market from '../data/markets/saudi-arabia.json' with {type:'json'};
 
-const planSchema={type:'object',additionalProperties:false,required:['supported','reason','actions'],properties:{supported:{type:'boolean'},reason:{type:'string'},actions:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,required:['action','fieldPurpose','valueKey','locator','reason'],properties:{action:{type:'string',enum:['fill','click','observe']},fieldPurpose:{type:['string','null']},valueKey:{type:['string','null']},reason:{type:'string'},locator:{type:'object',additionalProperties:false,required:['strategy','value'],properties:{strategy:{type:'string',enum:['label','role','name','id','css']},value:{type:'string'}}}}}}}} as const;
+const planSchema={type:'object',additionalProperties:false,required:['supported','reason','actions'],properties:{supported:{type:'boolean'},reason:{type:'string'},actions:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,required:['action','fieldPurpose','valueKey','locator','reason'],properties:{action:{type:'string',enum:['fill','click','observe']},fieldPurpose:{type:['string','null']},valueKey:{type:['string','null'],enum:[null,'fullName','mixedName','email','phoneLocal','phoneInternational','city','password','arabicIndicDigits']},reason:{type:'string'},locator:{type:'object',additionalProperties:false,required:['strategy','value'],properties:{strategy:{type:'string',enum:['label','role','name','id','css']},value:{type:'string'}}}}}}}} as const;
 
 type PlanResult={supported:boolean;reason:string;actions:PlanAction[];source:string;fallbackReason:string|null;log:string[]};
 
@@ -26,7 +26,7 @@ export async function createPlan(fields:Field[],buttons:string[]):Promise<PlanRe
       const response=await client.responses.create({model,reasoning:{effort:'low'},input:[{role:'system',content:'You plan a bounded, non-destructive audit of a public standard signup form. Use only supplied DOM-grounded locators. Never bypass CAPTCHA, authentication, or submit a real account. Compare an English baseline with Saudi Arabic persona input. Return the smallest useful plan.'},{role:'user',content:JSON.stringify({market,fields,buttons})}],text:{format:{type:'json_schema',name:'signup_audit_plan',strict:true,schema:planSchema}}},{signal:AbortSignal.timeout(90_000)});
       const parsed=JSON.parse(response.output_text) as {supported:boolean;reason:string;actions:PlanAction[]};
       const source=`${response.model}-adaptive`;
-      const decisions=parsed.actions.map((action,index)=>`Decision ${index+1}: ${action.action} ${action.fieldPurpose??'page'} via ${action.locator.strategy}=${action.locator.value}; reason=${action.reason}`);
+      const decisions=parsed.actions.map((action,index)=>`Decision ${index+1}: ${action.action} ${action.fieldPurpose??'page'}${action.valueKey?` with ${action.valueKey}`:''} via ${action.locator.strategy}=${action.locator.value}; reason=${action.reason}`);
       const completedLog=[...log,`Planner response received: id=${response.id}, model=${response.model}, supported=${parsed.supported}, actions=${parsed.actions.length}`,`Planner assessment: ${parsed.reason}`,...decisions];
       console.info('[planner-success]',JSON.stringify({responseId:response.id,model:response.model,supported:parsed.supported,actions:parsed.actions}));
       return {...parsed,source,fallbackReason:null,log:completedLog};
