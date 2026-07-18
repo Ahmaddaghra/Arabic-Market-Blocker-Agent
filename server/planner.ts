@@ -60,6 +60,13 @@ export type PlanResult = {
   fallbackReason: string | null;
   log: string[];
 };
+export function adaptivePlannerLabel(model: string) {
+  const reported =
+    model === "gpt-5.6"
+      ? "gpt-5.6-sol"
+      : model.replace(/-adaptive$/, "").replace(/ \(adaptive\)$/, "");
+  return `${reported} (adaptive)`;
+}
 
 function sanitize(message: string) {
   return message
@@ -189,7 +196,7 @@ export async function createPlan(
         reason: string;
         actions: PlanAction[];
       };
-      const source = `${response.model}-adaptive`;
+      const source = adaptivePlannerLabel(response.model);
       const decisions = parsed.actions.map(
         (action, index) =>
           `Decision ${index + 1}: ${action.action} ${action.fieldPurpose ?? "page"}${action.valueKey ? ` with ${action.valueKey}` : ""} via ${action.locator.strategy}=${action.locator.value}; reason=${action.reason}`,

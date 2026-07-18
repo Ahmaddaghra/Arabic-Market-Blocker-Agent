@@ -2,7 +2,11 @@ import { chromium, type Page } from "playwright";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { createPlan, createDeterministicPlan } from "./planner.js";
+import {
+  createPlan,
+  createDeterministicPlan,
+  adaptivePlannerLabel,
+} from "./planner.js";
 import { loadMarket, type Market } from "./markets.js";
 import type { PlanResult } from "./planner.js";
 import type {
@@ -245,7 +249,11 @@ export async function runAudit(
   let progressSequence = 0;
   let progressStep = 0;
   let progressTotal: number | null = 5;
-  let activePlanner = "pending";
+  let activePlanner = options.planner
+    ? "injected-planner"
+    : process.env.OPENAI_API_KEY
+      ? adaptivePlannerLabel(process.env.OPENAI_MODEL || "gpt-5.6")
+      : "deterministic-fallback";
   const emit = (
     type: AuditProgress["type"],
     message: string,
@@ -369,11 +377,6 @@ export async function runAudit(
       };
     }
     const planner = options.planner || createPlan;
-    activePlanner = options.planner
-      ? "injected-planner"
-      : process.env.OPENAI_API_KEY
-        ? process.env.OPENAI_MODEL || "gpt-5.6"
-        : "deterministic-fallback";
     emit(
       "planner",
       `Identified ${fields.length} visible field${fields.length === 1 ? "" : "s"}. ${activePlanner} is planning grounded actions…`,

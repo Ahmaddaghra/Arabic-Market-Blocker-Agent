@@ -18,7 +18,7 @@ This project was built for OpenAI Build Week as a bounded developer tool, not a 
 1. Open the [live demo](https://arabic-market-blocker-agent.onrender.com).
 2. Paste `https://arabic-market-blocker-agent.onrender.com/demo/adaptive/`.
 3. Click **Run Saudi signup audit**.
-4. Confirm the result says `planner: gpt-5.6-sol-adaptive`, then inspect **Why GPT-5.6 mattered**, the EN/AR field comparison, and the generated test.
+4. Confirm the result says `planner: gpt-5.6-sol (adaptive)`, then inspect **Why GPT-5.6 mattered**, the EN/AR field comparison, and the generated test.
 
 The centerpiece target uses unconventional labels and a second step revealed only after **Continue**. The deterministic fallback maps `0/2` initial fields; GPT-5.6 maps them, navigates, replans against the newly visible DOM, and completes the bounded audit. Recorded proof: [fallback run](evaluation/runs/adaptive-multistep-fallback.json) and [adaptive run](evaluation/runs/adaptive-multistep-gpt.json).
 
@@ -129,8 +129,8 @@ Observed deployed repeatability check (2026-07-18):
 
 | Run | Planner | Response ID | Unique blockers | Failing cases | Precision | Recall | Submission attempted | Flow completed |
 |---|---|---|---:|---:|---:|---:|---|---|
-| 1 | `gpt-5.6-sol-adaptive` | `resp_014a94196f8f4663006a5ad5e646ec819abf65a53a30fe2825` | 2 | 5 | 1.0 | 1.0 | true | false |
-| 2 | `gpt-5.6-sol-adaptive` | `resp_0f031908e2a2357f006a5ad6303b88819a9fae9454bb9ab608` | 2 | 3 | 1.0 | 1.0 | true | false |
+| 1 | `gpt-5.6-sol (adaptive)` | `resp_014a94196f8f4663006a5ad5e646ec819abf65a53a30fe2825` | 2 | 5 | 1.0 | 1.0 | true | false |
+| 2 | `gpt-5.6-sol (adaptive)` | `resp_0f031908e2a2357f006a5ad6303b88819a9fae9454bb9ab608` | 2 | 3 | 1.0 | 1.0 | true | false |
 
 These repeatability runs used the real isolated `en-US` control and `ar-SA` persona contexts. The adaptive planner varied the order and number of repeated test cases, but it kept the unique blocker count and benchmark metrics stable. `flowCompleted: false` is the expected result for this seeded benchmark: the final submission click executed, then the seeded Arabic-name and Saudi-phone validation blockers prevented success.
 

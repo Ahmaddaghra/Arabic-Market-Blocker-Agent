@@ -13,7 +13,7 @@ test('controlled benchmark uses the adaptive planner when an API key is configur
   await page.getByRole('button',{name:'Run Saudi signup audit'}).click();
   await expect(page.getByText('Live audit progress')).toBeVisible();
   await expect(page.getByRole('heading',{level:1,name:/Found 2 unique blockers/})).toBeVisible({timeout:120000});
-  await expect(page.getByText(/Planner: gpt-5\.6.*-adaptive/)).toBeVisible();
+  await expect(page.getByText('Planner: gpt-5.6-sol (adaptive)',{exact:true}).first()).toBeVisible();
   await expect(page.getByText('Adaptive planner completed without fallback.')).toBeVisible();
   await expect(page.getByRole('heading',{name:'Why GPT-5.6 mattered'})).toBeVisible();
   await expect(page.getByText('Per-field control comparison')).toBeVisible();
