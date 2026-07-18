@@ -6,3 +6,23 @@
 .planner-log span { color: #087848; font-weight: 700; }
 .planner-log ol { margin: 0; padding: 12px 18px 12px 40px; max-height: 220px; overflow: auto; }
 .planner-log li { margin: 6px 0; color: #425164; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.why-gpt { border: 1px solid #b9d8c9; border-radius: 10px; background: #f4fbf7; margin-bottom: 18px; overflow: hidden; }
+.why-gpt-title { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 16px; border-bottom: 1px solid #cfe3d8; }
+.why-gpt-title small { color: #547063; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; }
+.why-gpt-title h2 { margin: 4px 0 0; font-size: 21px; }
+.why-gpt-title > span { color: #087848; font-weight: 750; font-size: 13px; }
+.why-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; padding: 16px; }
+.why-gpt h3 { font-size: 14px; margin: 0 0 10px; }
+.why-grid p { background: white; border: 1px solid #d7e7df; border-radius: 7px; padding: 9px; margin: 7px 0; display: flex; flex-direction: column; gap: 5px; }
+.why-grid p b { font-size: 13px; }
+.why-grid p code,.why-grid p span { color: #536171; font-size: 12px; line-height: 1.4; }
+.decision-list { padding: 0 16px 14px; }
+.decision-list > div { display: grid; grid-template-columns: 24px minmax(220px,.8fr) 1.3fr; gap: 8px; align-items: start; border-top: 1px solid #d7e7df; padding: 9px 0; }
+.decision-list > div > span { width: 21px; height: 21px; border-radius: 50%; display: grid; place-items: center; background: #087848; color: white; font-size: 11px; }
+.decision-list code { font-size: 12px; }
+.decision-list p { margin: 0; color: #536171; font-size: 12px; line-height: 1.4; }
+.plan-diff { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #e8f5ee; padding: 14px 16px; }
+.plan-diff > div { display: flex; flex-direction: column; gap: 4px; }
+.plan-diff small { color: #567064; }
+.plan-diff p { grid-column: 1/-1; margin: 2px 0 0; color: #365447; font-size: 12px; }
+@media(max-width:850px){.why-gpt-title{align-items:flex-start;flex-direction:column}.why-grid{grid-template-columns:1fr}.decision-list>div{grid-template-columns:24px 1fr}.decision-list p{grid-column:2}.plan-diff{grid-template-columns:1fr}}
