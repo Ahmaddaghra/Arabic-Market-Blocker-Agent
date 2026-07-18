@@ -2,6 +2,7 @@ node_modules
 dist
 dist-server
 artifacts
+runs
 test-results
 playwright-report
 .env
