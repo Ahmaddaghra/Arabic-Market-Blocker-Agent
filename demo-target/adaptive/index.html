@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Adaptive multi-step signup benchmark</title>
+<style>
+  body{font-family:system-ui;background:#f4f6f8;margin:0;display:grid;place-items:center;min-height:100vh;color:#172334}.box{background:white;width:min(460px,90vw);padding:36px;border-radius:14px;box-shadow:0 12px 50px #11223318}label{display:block;font-weight:650;margin:18px 0 7px}input{width:100%;padding:12px;box-sizing:border-box;border:1px solid #aeb9c3;border-radius:6px}button{width:100%;margin-top:22px;padding:13px;border:0;border-radius:6px;background:#126b4b;color:white;font-weight:700}.error{color:#b32d26;font-size:13px;min-height:18px;margin-top:5px}.success{color:#087848;font-weight:700;margin-top:16px}.step[hidden]{display:none}.eyebrow{color:#587080;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+</style>
+<main class="box">
+  <div class="eyebrow">Controlled adaptive-planning benchmark</div>
+  <h1>Join the launch circle</h1>
+  <p>Two steps with intentionally unconventional field language.</p>
+  <form id="signup">
+    <section class="step" id="stepOne">
+      <label for="greeting">How should we greet you?</label>
+      <input id="greeting" name="greeting_preference" type="text" required aria-describedby="greetingError">
+      <div class="error" id="greetingError"></div>
+      <label for="contactLine">Mobile / WhatsApp</label>
+      <input id="contactLine" name="preferred_contact_line" type="text" inputmode="tel" required aria-describedby="contactError">
+      <div class="error" id="contactError"></div>
+      <button id="continue" type="button">Continue</button>
+    </section>
+    <section class="step" id="stepTwo" hidden>
+      <label for="inbox">Work email</label>
+      <input id="inbox" name="email" type="email" required>
+      <label for="secret">Password</label>
+      <input id="secret" name="password" type="password" required>
+      <button type="submit">Create workspace</button>
+    </section>
+    <div id="success" class="success" hidden data-audit-success="true">Adaptive benchmark flow completed.</div>
+  </form>
+</main>
+<script>
+  const validateGreeting=()=>greetingError.textContent=/[^A-Za-z '-]/.test(greeting.value)?'Only Latin letters are allowed':'';
+  const validateContact=()=>contactError.textContent=!/^\+1\d{10}$/.test(contactLine.value)?'Use an accepted US contact number':'';
+  greeting.addEventListener('blur',validateGreeting);
+  contactLine.addEventListener('blur',validateContact);
+  continue.addEventListener('click',()=>{validateGreeting();validateContact();stepOne.hidden=true;stepTwo.hidden=false});
+  signup.addEventListener('submit',event=>{event.preventDefault();success.hidden=Boolean(greetingError.textContent||contactError.textContent)});
+</script>
+</html>
