@@ -4,7 +4,7 @@ import market from '../data/markets/saudi-arabia.json' with {type:'json'};
 
 const planSchema={type:'object',additionalProperties:false,required:['supported','reason','actions'],properties:{supported:{type:'boolean'},reason:{type:'string'},actions:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,required:['action','fieldPurpose','valueKey','locator','reason'],properties:{action:{type:'string',enum:['fill','click','observe']},fieldPurpose:{type:['string','null']},valueKey:{type:['string','null'],enum:[null,'fullName','mixedName','email','phoneLocal','phoneInternational','city','password','arabicIndicDigits']},reason:{type:'string'},locator:{type:'object',additionalProperties:false,required:['strategy','value'],properties:{strategy:{type:'string',enum:['label','role','name','id','css']},value:{type:'string'}}}}}}}} as const;
 
-type PlanResult={supported:boolean;reason:string;actions:PlanAction[];source:string;fallbackReason:string|null;log:string[]};
+export type PlanResult={supported:boolean;reason:string;actions:PlanAction[];source:string;fallbackReason:string|null;log:string[]};
 
 function sanitize(message:string){return message.replace(/sk-[A-Za-z0-9_-]+/g,'[REDACTED_API_KEY]').slice(0,1200)}
 function classifyPlannerError(error:unknown){
