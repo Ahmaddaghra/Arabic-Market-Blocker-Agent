@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "target": "https://demo.nopcommerce.com/register",
+  "request": {
+    "method": "POST",
+    "endpoint": "https://arabic-market-blocker-agent.onrender.com/api/audits",
+    "body": {
+      "url": "https://demo.nopcommerce.com/register",
+      "allowSubmission": false
+    }
+  },
+  "result": {
+    "status": "unsupported",
+    "verdict": "Unsupported site",
+    "planner": "gpt-5.6-sol-adaptive",
+    "fallbackReason": null,
+    "allowSubmission": false,
+    "benchmarkEvaluation": null,
+    "findings": [],
+    "passes": [],
+    "supportMessage": "No auditable signup fields were exposed to the deployed browser. The run was stopped instead of reporting a false pass.",
+    "plannerLog": [
+      "Planner request started: model=gpt-5.6, fields=0, buttons=0, allowSubmission=false, timeout=90000ms",
+      "Planner response received: id=resp_0536d474d30f2034006a5acb7696a8819baa9e7be9121e7350, model=gpt-5.6-sol, supported=false, actions=0",
+      "Planner assessment: No DOM-grounded field or button locators were supplied, so no safe form interactions can be planned. Submission is disallowed, and flow completion cannot be tested.",
+      "Graceful stop: No auditable signup fields were exposed to the deployed browser. The run was stopped instead of reporting a false pass."
+    ]
+  }
+}

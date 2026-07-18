@@ -97,3 +97,20 @@ Observed deployed repeatability check (2026-07-18):
 | 2 | `gpt-5.6-sol-adaptive` | `resp_079e8aba30fb2c78006a5ac8a39aa08198b1fe64ef95695200` | 2 | 5 | 1.0 | 1.0 | true | false |
 
 The adaptive planner varied the order and number of repeated test cases, but it kept the unique blocker count and benchmark metrics stable. `flowCompleted: false` is the expected result for this seeded benchmark: the final submission click executed, then the seeded Arabic-name and Saudi-phone validation blockers prevented success.
+
+## Evaluation
+
+**Evaluation summary:** 1 controlled benchmark + 3 external demo applications; 2 findings; 2 confirmed against controlled ground truth; 7 external Saudi-market pass cases; 2 unsupported runs handled gracefully, including one rejected candidate. External targets have no ground truth, so no external precision or recall is claimed.
+
+All external targets are public demo, sandbox, or automation-practice applications. External runs use `allowSubmission: false`; they fill and inspect fields but do not create accounts.
+
+| Target | Preflight | Adaptive result | Findings | Passes | Notes | Replayable log |
+|---|---|---|---:|---:|---|---|
+| Controlled `/demo/` | Owned benchmark; no CAPTCHA | Completed | 2 | — | Both seeded root causes confirmed; submission attempted and correctly blocked | [run log](evaluation/runs/controlled-benchmark.json) |
+| [ParaBank](https://parabank.parasoft.com/parabank/register.htm) | Public Parasoft demo; signup form; no CAPTCHA observed | Completed | 0 | 5 | Arabic name, mixed BiDi name, Saudi local/international phone, and Arabic-Indic digits retained before submission | [run log](evaluation/runs/external-parabank.json) |
+| [Automation Exercise](https://automationexercise.com/login) | Public automation-practice site; signup form; no CAPTCHA observed | Completed | 0 | 2 | Arabic and mixed BiDi names retained; phone checks unavailable on this form | [run log](evaluation/runs/external-automation-exercise.json) |
+| [nopCommerce demo](https://demo.nopcommerce.com/register) | Official resettable demo; form visible during browser preflight | Unsupported | 0 | 0 | Render-side browser received no auditable fields; stopped instead of reporting a false pass | [run log](evaluation/runs/unsupported-nopcommerce.json) |
+
+Rejected candidate: the Magento Software Testing Board URL returned an SSL/reveal interstitial rather than signup fields. The deployed audit classified it as unsupported with zero findings and zero passes. It is not counted among the three external evaluation applications. [Rejected-candidate run log](evaluation/runs/unsupported-magento-candidate.json)
+
+These external findings and passes are observations from bounded, non-submitting runs. They do not certify the applications or prove the absence of other blockers.

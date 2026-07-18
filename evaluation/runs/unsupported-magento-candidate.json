@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "target": "https://magento.softwaretestingboard.com/customer/account/create/",
+  "request": {
+    "method": "POST",
+    "endpoint": "https://arabic-market-blocker-agent.onrender.com/api/audits",
+    "body": {
+      "url": "https://magento.softwaretestingboard.com/customer/account/create/",
+      "allowSubmission": false
+    }
+  },
+  "result": {
+    "status": "unsupported",
+    "verdict": "Unsupported site",
+    "planner": "gpt-5.6-sol-adaptive",
+    "fallbackReason": null,
+    "allowSubmission": false,
+    "benchmarkEvaluation": null,
+    "findings": [],
+    "passes": [],
+    "supportMessage": "No auditable signup fields were exposed to the deployed browser. The run was stopped instead of reporting a false pass.",
+    "plannerLog": [
+      "Planner request started: model=gpt-5.6, fields=0, buttons=1, allowSubmission=false, timeout=90000ms",
+      "Planner response received: id=resp_0163b2487ade2113006a5acb34b56c819bbf2f5e186a8e29c7, model=gpt-5.6-sol, supported=true, actions=1",
+      "Planner assessment: A safe discovery step is available, but the signup audit cannot proceed until the form fields are revealed and DOM-grounded field locators are supplied. No submission control will be clicked.",
+      "Decision 1: click page via role=button[name=\"Click to reveal\"]; reason=Reveal the form without submitting or creating an account.",
+      "Graceful stop: No auditable signup fields were exposed to the deployed browser. The run was stopped instead of reporting a false pass."
+    ]
+  }
+}
