@@ -12,6 +12,40 @@ const app = express();
 const port = Number(process.env.PORT || 3000);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const runsDirectory = path.resolve("runs");
+const bundledRunSpecs = {
+  "benchmark-saudi": "bundled-benchmark-saudi.json",
+  "benchmark-uae": "bundled-benchmark-uae.json",
+  "multistep-gpt": "bundled-multistep-gpt.json",
+  "external-lambdatest": "bundled-external-lambdatest.json",
+} as const;
+const bundledReports = new Map<string, AuditResult>();
+async function loadBundledReports() {
+  for (const [slug, file] of Object.entries(bundledRunSpecs)) {
+    const report = JSON.parse(
+      await fs.readFile(path.join(root, "evaluation/runs", file), "utf8"),
+    ) as AuditResult;
+    const [english, arabic] = await Promise.all([
+      fs.readFile(
+        path.join(root, "evaluation/screenshots", `${slug}-en.b64`),
+        "utf8",
+      ),
+      fs.readFile(
+        path.join(root, "evaluation/screenshots", `${slug}-ar.b64`),
+        "utf8",
+      ),
+    ]);
+    report.runId = slug;
+    report.reportUrl = `/report/${slug}`;
+    report.durableReport = true;
+    report.screenshots = {
+      baseline: `data:image/png;base64,${english.replace(/\s/g, "")}`,
+      arabic: `data:image/png;base64,${arabic.replace(/\s/g, "")}`,
+    };
+    for (const finding of report.findings)
+      finding.evidenceScreenshot = report.screenshots.arabic;
+    bundledReports.set(slug, report);
+  }
+}
 async function persistRun(id: string, result: AuditResult) {
   await fs.mkdir(runsDirectory, { recursive: true });
   const safeJson = JSON.stringify(result).replace(
@@ -21,6 +55,7 @@ async function persistRun(id: string, result: AuditResult) {
   await fs.writeFile(path.join(runsDirectory, `${id}.json`), safeJson, "utf8");
 }
 async function readRun(id: string) {
+  if (bundledReports.has(id)) return bundledReports.get(id)!;
   if (!/^[0-9a-f-]{36}$/.test(id)) return null;
   try {
     return JSON.parse(
@@ -202,6 +237,7 @@ app.post("/api/audit-jobs", auditLimiter, (req, res) => {
       job.result = result;
       result.runId = id;
       result.reportUrl = `/report/${id}`;
+      result.durableReport = false;
       await persistRun(id, result);
       job.status =
         result.status === "unsupported" ? "unsupported" : "completed";
@@ -232,6 +268,7 @@ app.get("/api/audit-jobs/:id", (req, res) => {
 app.use("/demo", express.static(path.join(root, "demo-target")));
 app.use(express.static(path.join(root, "dist")));
 app.use((_req, res) => res.sendFile(path.join(root, "dist", "index.html")));
+await loadBundledReports();
 app.listen(port, () =>
   console.log(
     `Arabic Market Blocker Agent listening on http://localhost:${port}`,

@@ -1,0 +1,724 @@
+{
+  "status": "completed",
+  "verdict": "Found 1 unique blocker across 3 failing test cases",
+  "url": "https://ecommerce-playground.lambdatest.io/index.php?route=account/register",
+  "market": {
+    "id": "saudi-arabia",
+    "label": "Saudi Arabia",
+    "shortLabel": "Saudi",
+    "locale": "ar-SA",
+    "currency": "SAR"
+  },
+  "planner": "gpt-5.6-sol (adaptive)",
+  "fallbackReason": null,
+  "plannerLog": [
+    "Planner request started: model=gpt-5.6, fields=11, buttons=3, allowSubmission=false, timeout=90000ms",
+    "Planner response received: id=resp_029bd6e3a6aeee60006a5aeba786d4819b935491e2a7506547, model=gpt-5.6-sol, supported=true, actions=10",
+    "Planner assessment: A bounded pre-submission audit can test Saudi name, email, telephone, password, BiDi, numeral, and field-direction handling. Flow completion and submit-triggered validation cannot be tested because allowSubmission=false.",
+    "Decision 1: fill first name with fullName via label=First Name; reason=Test Arabic Unicode and long compound name handling.",
+    "Decision 2: fill last name with mixedName via label=Last Name; reason=Test mixed Arabic/English BiDi handling in a name field.",
+    "Decision 3: fill email address with email via label=E-Mail; reason=Provide a semantically valid Saudi test email.",
+    "Decision 4: fill telephone number with phoneLocal via label=Telephone; reason=Test Saudi local telephone acceptance.",
+    "Decision 5: observe telephone number via label=Telephone; reason=Inspect direction, alignment, formatting, and any inline validation without submitting.",
+    "Decision 6: fill telephone number with phoneInternational via label=Telephone; reason=Test Saudi international telephone acceptance.",
+    "Decision 7: fill telephone number with arabicIndicDigits via label=Telephone; reason=Test Arabic-Indic numeral handling in the telephone field.",
+    "Decision 8: fill password with password via label=Password; reason=Populate the password field with the Saudi semantic test password.",
+    "Decision 9: fill password confirmation with password via label=Password Confirm; reason=Confirm the same test password without submitting.",
+    "Decision 10: observe signup form via label=First Name; reason=Inspect field direction, alignment, and visible inline validation; do not click Continue or the submit control.",
+    "Execution comparison: valueKey=fullName, locator=label=First Name, EN value=\"John Smith\" accepted, Saudi value=\"عبد الرحمن بن خالد العتيبي\" accepted, classification=pass",
+    "Execution comparison: valueKey=mixedName, locator=label=Last Name, EN value=\"John Smith\" accepted, Saudi value=\"عبد الرحمن Alotaibi\" accepted, classification=pass",
+    "Execution comparison: valueKey=email, locator=label=E-Mail, EN value=\"john.smith@example.com\" accepted, Saudi value=\"abdulrahman.saudi@example.com\" accepted, classification=pass",
+    "Execution comparison: valueKey=phoneLocal, locator=label=Telephone, EN value=\"+14155552671\" Enter valid phone number with country code!, Saudi value=\"0551234567\" Enter valid phone number with country code!, classification=general-form-issue",
+    "Execution observe: locator=label=Telephone, EN visible=true validationErrors=1, AR visible=true validationErrors=1, screenshots=/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-4-english.png,/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-4-arabic.png",
+    "Execution comparison: valueKey=phoneInternational, locator=label=Telephone, EN value=\"+14155552671\" Enter valid phone number with country code!, Saudi value=\"+966551234567\" Enter valid phone number with country code!, classification=general-form-issue",
+    "Execution comparison: valueKey=arabicIndicDigits, locator=label=Telephone, EN value=\"+14155552671\" Enter valid phone number with country code!, Saudi value=\"٠٥٥١٢٣٤٥٦٧\" Enter valid phone number with country code!, classification=general-form-issue",
+    "Execution comparison: valueKey=password, locator=label=Password, EN value=\"SafeDemo!2026\" accepted, Saudi value=\"SafeDemo!2026\" accepted, classification=pass",
+    "Execution comparison: valueKey=password, locator=label=Password Confirm, EN value=\"SafeDemo!2026\" accepted, Saudi value=\"SafeDemo!2026\" accepted, classification=pass",
+    "Execution observe: locator=label=First Name, EN visible=true validationErrors=1, AR visible=true validationErrors=1, screenshots=/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-9-english.png,/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-9-arabic.png"
+  ],
+  "allowSubmission": false,
+  "benchmarkEvaluation": null,
+  "fields": [
+    {
+      "tag": "input",
+      "type": "text",
+      "label": "Search For Products",
+      "name": "search",
+      "placeholder": "Search For Products",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "Search For Products"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "label": "First Name",
+      "name": "firstname",
+      "placeholder": "First Name",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "label": "Last Name",
+      "name": "lastname",
+      "placeholder": "Last Name",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "Last Name"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "email",
+      "label": "E-Mail",
+      "name": "email",
+      "placeholder": "E-Mail",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "E-Mail"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "tel",
+      "label": "Telephone",
+      "name": "telephone",
+      "placeholder": "Telephone",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "password",
+      "label": "Password",
+      "name": "password",
+      "placeholder": "Password",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "password",
+      "label": "Password Confirm",
+      "name": "confirm",
+      "placeholder": "Password Confirm",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "Password Confirm"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "label": "Yes",
+      "name": "newsletter",
+      "placeholder": "",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "Yes"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "radio",
+      "label": "No",
+      "name": "newsletter",
+      "placeholder": "",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "No"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "checkbox",
+      "label": "I have read and agree to the Privacy Policy",
+      "name": "agree",
+      "placeholder": "",
+      "required": false,
+      "locator": {
+        "strategy": "label",
+        "value": "I have read and agree to the Privacy Policy"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "submit",
+      "label": "",
+      "name": "",
+      "placeholder": "",
+      "required": false,
+      "locator": {
+        "strategy": "css",
+        "value": "input:nth-of-type(11)"
+      }
+    }
+  ],
+  "plan": [
+    {
+      "action": "fill",
+      "fieldPurpose": "first name",
+      "valueKey": "fullName",
+      "reason": "Test Arabic Unicode and long compound name handling.",
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "last name",
+      "valueKey": "mixedName",
+      "reason": "Test mixed Arabic/English BiDi handling in a name field.",
+      "locator": {
+        "strategy": "label",
+        "value": "Last Name"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "email address",
+      "valueKey": "email",
+      "reason": "Provide a semantically valid Saudi test email.",
+      "locator": {
+        "strategy": "label",
+        "value": "E-Mail"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "telephone number",
+      "valueKey": "phoneLocal",
+      "reason": "Test Saudi local telephone acceptance.",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      }
+    },
+    {
+      "action": "observe",
+      "fieldPurpose": "telephone number",
+      "valueKey": null,
+      "reason": "Inspect direction, alignment, formatting, and any inline validation without submitting.",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "telephone number",
+      "valueKey": "phoneInternational",
+      "reason": "Test Saudi international telephone acceptance.",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "telephone number",
+      "valueKey": "arabicIndicDigits",
+      "reason": "Test Arabic-Indic numeral handling in the telephone field.",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "password",
+      "valueKey": "password",
+      "reason": "Populate the password field with the Saudi semantic test password.",
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "password confirmation",
+      "valueKey": "password",
+      "reason": "Confirm the same test password without submitting.",
+      "locator": {
+        "strategy": "label",
+        "value": "Password Confirm"
+      }
+    },
+    {
+      "action": "observe",
+      "fieldPurpose": "signup form",
+      "valueKey": null,
+      "reason": "Inspect field direction, alignment, and visible inline validation; do not click Continue or the submit control.",
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      }
+    }
+  ],
+  "deterministicPlan": [
+    {
+      "action": "fill",
+      "fieldPurpose": "First Name",
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      },
+      "valueKey": "fullName",
+      "reason": "Fallback matched an explicit conventional field hint for First Name"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Last Name",
+      "locator": {
+        "strategy": "label",
+        "value": "Last Name"
+      },
+      "valueKey": "fullName",
+      "reason": "Fallback matched an explicit conventional field hint for Last Name"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "E-Mail",
+      "locator": {
+        "strategy": "label",
+        "value": "E-Mail"
+      },
+      "valueKey": "email",
+      "reason": "Fallback matched an explicit conventional field hint for E-Mail"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Telephone",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      },
+      "valueKey": "phoneLocal",
+      "reason": "Fallback matched an explicit conventional field hint for Telephone"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Password",
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      },
+      "valueKey": "password",
+      "reason": "Fallback matched an explicit conventional field hint for Password"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Password Confirm",
+      "locator": {
+        "strategy": "label",
+        "value": "Password Confirm"
+      },
+      "valueKey": "password",
+      "reason": "Fallback matched an explicit conventional field hint for Password Confirm"
+    }
+  ],
+  "findings": [
+    {
+      "id": "3ce00a9b-2696-4e65-b14f-6c0abe3b3ece",
+      "rootCauseId": "general-label-Telephone",
+      "title": "General form issue in Telephone",
+      "severity": "blocker",
+      "checkId": "phone-local",
+      "summary": "Both English and Arabic control values failed; this is not classified as market-specific.",
+      "impact": "The tested field appears broken for more than the Saudi persona.",
+      "actual": "Enter valid phone number with country code!",
+      "expected": "Accept a valid control value in at least one tested locale",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      },
+      "evidenceScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png",
+      "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"Saudi phone formats are rejected\", async ({ page }) => {\n  await page.goto(\"https://ecommerce-playground.lambdatest.io/index.php?route=account/register\");\n  const field = page.getByLabel(\"Telephone\");\n  await field.fill(\"0551234567\");\n  await field.blur();\n  await expect(field).toHaveValue(\"0551234567\");\n  await expect(page.getByText(\"Enter valid phone number with country code!\", { exact: false })).not.toBeVisible();\n});\n",
+      "testCases": [
+        {
+          "checkId": "phone-local",
+          "valueKey": "phoneLocal",
+          "value": "0551234567",
+          "actual": "Enter valid phone number with country code!"
+        },
+        {
+          "checkId": "phone-international",
+          "valueKey": "phoneInternational",
+          "value": "+966551234567",
+          "actual": "Enter valid phone number with country code!"
+        },
+        {
+          "checkId": "arabic-indic-digits",
+          "valueKey": "arabicIndicDigits",
+          "value": "٠٥٥١٢٣٤٥٦٧",
+          "actual": "Enter valid phone number with country code!"
+        }
+      ]
+    }
+  ],
+  "passes": [
+    {
+      "checkId": "arabic-name",
+      "valueKey": "fullName",
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      },
+      "actual": "عبد الرحمن بن خالد العتيبي"
+    },
+    {
+      "checkId": "mixed-bidi",
+      "valueKey": "mixedName",
+      "locator": {
+        "strategy": "label",
+        "value": "Last Name"
+      },
+      "actual": "عبد الرحمن Alotaibi"
+    }
+  ],
+  "fieldComparisons": [
+    {
+      "checkId": "arabic-name",
+      "fieldPurpose": "First Name",
+      "valueKey": "fullName",
+      "classification": "pass",
+      "english": {
+        "value": "John Smith",
+        "actual": "John Smith",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "First Name"
+        }
+      },
+      "arabic": {
+        "value": "عبد الرحمن بن خالد العتيبي",
+        "actual": "عبد الرحمن بن خالد العتيبي",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "First Name"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "mixed-bidi",
+      "fieldPurpose": "Last Name",
+      "valueKey": "mixedName",
+      "classification": "pass",
+      "english": {
+        "value": "John Smith",
+        "actual": "John Smith",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Last Name"
+        }
+      },
+      "arabic": {
+        "value": "عبد الرحمن Alotaibi",
+        "actual": "عبد الرحمن Alotaibi",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Last Name"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "email",
+      "fieldPurpose": "E-Mail",
+      "valueKey": "email",
+      "classification": "pass",
+      "english": {
+        "value": "john.smith@example.com",
+        "actual": "john.smith@example.com",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "E-Mail"
+        }
+      },
+      "arabic": {
+        "value": "abdulrahman.saudi@example.com",
+        "actual": "abdulrahman.saudi@example.com",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "E-Mail"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "phone-local",
+      "fieldPurpose": "Telephone",
+      "valueKey": "phoneLocal",
+      "classification": "general-form-issue",
+      "english": {
+        "value": "+14155552671",
+        "actual": "+14155552671",
+        "accepted": false,
+        "validationMessage": "Enter valid phone number with country code!",
+        "locator": {
+          "strategy": "label",
+          "value": "Telephone"
+        }
+      },
+      "arabic": {
+        "value": "0551234567",
+        "actual": "0551234567",
+        "accepted": false,
+        "validationMessage": "Enter valid phone number with country code!",
+        "locator": {
+          "strategy": "label",
+          "value": "Telephone"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "phone-international",
+      "fieldPurpose": "Telephone",
+      "valueKey": "phoneInternational",
+      "classification": "general-form-issue",
+      "english": {
+        "value": "+14155552671",
+        "actual": "+14155552671",
+        "accepted": false,
+        "validationMessage": "Enter valid phone number with country code!",
+        "locator": {
+          "strategy": "label",
+          "value": "Telephone"
+        }
+      },
+      "arabic": {
+        "value": "+966551234567",
+        "actual": "+966551234567",
+        "accepted": false,
+        "validationMessage": "Enter valid phone number with country code!",
+        "locator": {
+          "strategy": "label",
+          "value": "Telephone"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "arabic-indic-digits",
+      "fieldPurpose": "Telephone",
+      "valueKey": "arabicIndicDigits",
+      "classification": "general-form-issue",
+      "english": {
+        "value": "+14155552671",
+        "actual": "+14155552671",
+        "accepted": false,
+        "validationMessage": "Enter valid phone number with country code!",
+        "locator": {
+          "strategy": "label",
+          "value": "Telephone"
+        }
+      },
+      "arabic": {
+        "value": "٠٥٥١٢٣٤٥٦٧",
+        "actual": "٠٥٥١٢٣٤٥٦٧",
+        "accepted": false,
+        "validationMessage": "Enter valid phone number with country code!",
+        "locator": {
+          "strategy": "label",
+          "value": "Telephone"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "password",
+      "fieldPurpose": "Password",
+      "valueKey": "password",
+      "classification": "pass",
+      "english": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password"
+        }
+      },
+      "arabic": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    },
+    {
+      "checkId": "password",
+      "fieldPurpose": "Password Confirm",
+      "valueKey": "password",
+      "classification": "pass",
+      "english": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password Confirm"
+        }
+      },
+      "arabic": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password Confirm"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+        "arabicScreenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+      }
+    }
+  ],
+  "actionObservations": [
+    {
+      "actionIndex": 4,
+      "locale": "en-US",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      },
+      "url": "https://ecommerce-playground.lambdatest.io/index.php?route=account/register",
+      "title": "Register Account",
+      "targetVisible": true,
+      "validationErrors": [
+        {
+          "locator": "telephone",
+          "message": "Enter valid phone number with country code!"
+        }
+      ],
+      "screenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-4-english.png"
+    },
+    {
+      "actionIndex": 4,
+      "locale": "ar-SA",
+      "locator": {
+        "strategy": "label",
+        "value": "Telephone"
+      },
+      "url": "https://ecommerce-playground.lambdatest.io/index.php?route=account/register",
+      "title": "Register Account",
+      "targetVisible": true,
+      "validationErrors": [
+        {
+          "locator": "telephone",
+          "message": "Enter valid phone number with country code!"
+        }
+      ],
+      "screenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-4-arabic.png"
+    },
+    {
+      "actionIndex": 9,
+      "locale": "en-US",
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      },
+      "url": "https://ecommerce-playground.lambdatest.io/index.php?route=account/register",
+      "title": "Register Account",
+      "targetVisible": true,
+      "validationErrors": [
+        {
+          "locator": "telephone",
+          "message": "Enter valid phone number with country code!"
+        }
+      ],
+      "screenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-9-english.png"
+    },
+    {
+      "actionIndex": 9,
+      "locale": "ar-SA",
+      "locator": {
+        "strategy": "label",
+        "value": "First Name"
+      },
+      "url": "https://ecommerce-playground.lambdatest.io/index.php?route=account/register",
+      "title": "Register Account",
+      "targetVisible": true,
+      "validationErrors": [
+        {
+          "locator": "telephone",
+          "message": "Enter valid phone number with country code!"
+        }
+      ],
+      "screenshot": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-observe-9-arabic.png"
+    }
+  ],
+  "screenshots": {
+    "baseline": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-english.png",
+    "arabic": "/artifacts/9a110454-52d5-4fdf-8425-a21ee395988c-arabic.png"
+  },
+  "comparison": {
+    "english": "English persona executed in isolated en-US context across 8 field checks",
+    "arabic": "Saudi persona produced evidence-backed failures"
+  },
+  "runId": "af7de92b-9ddb-4825-9c1a-dc4e3a8f97a7",
+  "reportUrl": "/report/af7de92b-9ddb-4825-9c1a-dc4e3a8f97a7"
+}

@@ -84,6 +84,7 @@ type Result = {
   comparison: { english: string; arabic: string };
   runId?: string;
   reportUrl?: string;
+  durableReport?: boolean;
 };
 type MarketSummary = {
   id: string;
@@ -185,7 +186,7 @@ function App() {
   const [error, setError] = useState("");
   const [events, setEvents] = useState<ProgressEvent[]>([]);
   const [jobStatus, setJobStatus] = useState("idle");
-  const reportId = location.pathname.match(/^\/report\/([0-9a-f-]{36})$/)?.[1];
+  const reportId = location.pathname.match(/^\/report\/([a-z0-9-]+)$/)?.[1];
   useEffect(() => {
     void fetch("/api/markets")
       .then(async (response) => {
@@ -603,7 +604,11 @@ function Results({ result }: { result: Result }) {
       <div className="detail">
         {result.reportUrl && (
           <div className="report-actions">
-            <span>Read-only shareable report</span>
+            <span>
+              {result.durableReport
+                ? "Permanent bundled report"
+                : "Fresh report link · temporary until the next service restart"}
+            </span>
             <button
               onClick={() =>
                 navigator.clipboard.writeText(

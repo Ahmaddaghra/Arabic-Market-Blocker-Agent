@@ -122,4 +122,5 @@ export type AuditResult = {
   comparison: { english: string; arabic: string };
   runId?: string;
   reportUrl?: string;
+  durableReport?: boolean;
 };

@@ -1,0 +1,372 @@
+{
+  "status": "completed",
+  "verdict": "Found 2 unique blockers across 2 failing test cases",
+  "url": "https://arabic-market-blocker-agent.onrender.com/demo/",
+  "market": {
+    "id": "united-arab-emirates",
+    "label": "United Arab Emirates",
+    "shortLabel": "UAE",
+    "locale": "ar-AE",
+    "currency": "AED"
+  },
+  "planner": "gpt-5.6-sol (adaptive)",
+  "fallbackReason": null,
+  "plannerLog": [
+    "Planner request started: model=gpt-5.6, fields=4, buttons=1, allowSubmission=true, timeout=90000ms",
+    "Planner response received: id=resp_0adb568fe97f9c3b006a5ae99277f4819b9c0163ba202c44d8, model=gpt-5.6-sol, supported=true, actions=5",
+    "Planner assessment: The supplied DOM-grounded locators cover all required signup fields and the final submit control; submission is explicitly allowed.",
+    "Decision 1: fill full name with fullName via label=Full name; reason=Test Arabic Unicode and long compound-name handling.",
+    "Decision 2: fill work email with email via label=Work email; reason=Provide the UAE persona's valid email address.",
+    "Decision 3: fill phone number with phoneInternational via label=Phone number; reason=Test a UAE phone number in international format.",
+    "Decision 4: fill password with password via label=Password; reason=Provide a valid benchmark password.",
+    "Decision 5: click submit signup form via role=Create account; reason=Verify signup flow completion with the permitted final submission.",
+    "Execution comparison: valueKey=fullName, locator=label=Full name, EN value=\"John Smith\" accepted, UAE value=\"مريم بنت راشد المنصوري\" Only English letters are allowed, classification=market-specific",
+    "Execution comparison: valueKey=email, locator=label=Work email, EN value=\"john.smith@example.com\" accepted, UAE value=\"maryam.uae@example.com\" accepted, classification=pass",
+    "Execution comparison: valueKey=phoneInternational, locator=label=Phone number, EN value=\"+14155552671\" accepted, UAE value=\"+971501234567\" Enter a valid US phone number, classification=market-specific",
+    "Execution comparison: valueKey=password, locator=label=Password, EN value=\"SafeDemo!2026\" accepted, UAE value=\"SafeDemo!2026\" accepted, classification=pass",
+    "Execution click: locator=role=Create account, EN=executed, AR=executed, submissionControl=true, flowCompleted=false"
+  ],
+  "allowSubmission": true,
+  "benchmarkEvaluation": {
+    "groundTruthBlockers": 2,
+    "detectedBlockers": 2,
+    "failingTestCases": 2,
+    "truePositives": 2,
+    "falsePositives": 0,
+    "falseNegatives": 0,
+    "precision": 1,
+    "recall": 1,
+    "submissionAttempted": true,
+    "flowCompleted": false
+  },
+  "fields": [
+    {
+      "tag": "input",
+      "type": "text",
+      "label": "Full name",
+      "name": "fullName",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Full name"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "email",
+      "label": "Work email",
+      "name": "email",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Work email"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "tel",
+      "label": "Phone number",
+      "name": "phone",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Phone number"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "password",
+      "label": "Password",
+      "name": "password",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      }
+    }
+  ],
+  "plan": [
+    {
+      "action": "fill",
+      "fieldPurpose": "full name",
+      "valueKey": "fullName",
+      "reason": "Test Arabic Unicode and long compound-name handling.",
+      "locator": {
+        "strategy": "label",
+        "value": "Full name"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "work email",
+      "valueKey": "email",
+      "reason": "Provide the UAE persona's valid email address.",
+      "locator": {
+        "strategy": "label",
+        "value": "Work email"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "phone number",
+      "valueKey": "phoneInternational",
+      "reason": "Test a UAE phone number in international format.",
+      "locator": {
+        "strategy": "label",
+        "value": "Phone number"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "password",
+      "valueKey": "password",
+      "reason": "Provide a valid benchmark password.",
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      }
+    },
+    {
+      "action": "click",
+      "fieldPurpose": "submit signup form",
+      "valueKey": null,
+      "reason": "Verify signup flow completion with the permitted final submission.",
+      "locator": {
+        "strategy": "role",
+        "value": "Create account"
+      }
+    }
+  ],
+  "deterministicPlan": [
+    {
+      "action": "fill",
+      "fieldPurpose": "Full name",
+      "locator": {
+        "strategy": "label",
+        "value": "Full name"
+      },
+      "valueKey": "fullName",
+      "reason": "Fallback matched an explicit conventional field hint for Full name"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Work email",
+      "locator": {
+        "strategy": "label",
+        "value": "Work email"
+      },
+      "valueKey": "email",
+      "reason": "Fallback matched an explicit conventional field hint for Work email"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Phone number",
+      "locator": {
+        "strategy": "label",
+        "value": "Phone number"
+      },
+      "valueKey": "phoneLocal",
+      "reason": "Fallback matched an explicit conventional field hint for Phone number"
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "Password",
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      },
+      "valueKey": "password",
+      "reason": "Fallback matched an explicit conventional field hint for Password"
+    }
+  ],
+  "findings": [
+    {
+      "id": "3f392169-8d59-4db9-8139-f7fe16a0f2d9",
+      "rootCauseId": "name-ascii-only",
+      "title": "Arabic and mixed-script names are rejected",
+      "severity": "blocker",
+      "checkId": "arabic-name",
+      "summary": "Only English letters are allowed",
+      "impact": "A United Arab Emirates user may be unable to complete signup.",
+      "actual": "Only English letters are allowed",
+      "expected": "Accept the UAE value when the English control is accepted",
+      "locator": {
+        "strategy": "label",
+        "value": "Full name"
+      },
+      "evidenceScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png",
+      "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"Arabic and mixed-script names are rejected\", async ({ page }) => {\n  await page.goto(\"https://arabic-market-blocker-agent.onrender.com/demo/\");\n  const field = page.getByLabel(\"Full name\");\n  await field.fill(\"مريم بنت راشد المنصوري\");\n  await field.blur();\n  await expect(field).toHaveValue(\"مريم بنت راشد المنصوري\");\n  await expect(page.getByText(\"Only English letters are allowed\", { exact: false })).not.toBeVisible();\n});\n",
+      "testCases": [
+        {
+          "checkId": "arabic-name",
+          "valueKey": "fullName",
+          "value": "مريم بنت راشد المنصوري",
+          "actual": "Only English letters are allowed"
+        }
+      ]
+    },
+    {
+      "id": "5a755e85-fe61-4df2-b25c-c1dc6c255e43",
+      "rootCauseId": "phone-us-only",
+      "title": "UAE phone formats are rejected",
+      "severity": "blocker",
+      "checkId": "phone-international",
+      "summary": "Enter a valid US phone number",
+      "impact": "A United Arab Emirates user may be unable to complete signup.",
+      "actual": "Enter a valid US phone number",
+      "expected": "Accept the UAE value when the English control is accepted",
+      "locator": {
+        "strategy": "label",
+        "value": "Phone number"
+      },
+      "evidenceScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png",
+      "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"UAE phone formats are rejected\", async ({ page }) => {\n  await page.goto(\"https://arabic-market-blocker-agent.onrender.com/demo/\");\n  const field = page.getByLabel(\"Phone number\");\n  await field.fill(\"+971501234567\");\n  await field.blur();\n  await expect(field).toHaveValue(\"+971501234567\");\n  await expect(page.getByText(\"Enter a valid US phone number\", { exact: false })).not.toBeVisible();\n});\n",
+      "testCases": [
+        {
+          "checkId": "phone-international",
+          "valueKey": "phoneInternational",
+          "value": "+971501234567",
+          "actual": "Enter a valid US phone number"
+        }
+      ]
+    }
+  ],
+  "passes": [],
+  "fieldComparisons": [
+    {
+      "checkId": "arabic-name",
+      "fieldPurpose": "Full name",
+      "valueKey": "fullName",
+      "classification": "market-specific",
+      "english": {
+        "value": "John Smith",
+        "actual": "John Smith",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Full name"
+        }
+      },
+      "arabic": {
+        "value": "مريم بنت راشد المنصوري",
+        "actual": "مريم بنت راشد المنصوري",
+        "accepted": false,
+        "validationMessage": "Only English letters are allowed",
+        "locator": {
+          "strategy": "label",
+          "value": "Full name"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-english.png",
+        "arabicScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png"
+      }
+    },
+    {
+      "checkId": "email",
+      "fieldPurpose": "Work email",
+      "valueKey": "email",
+      "classification": "pass",
+      "english": {
+        "value": "john.smith@example.com",
+        "actual": "john.smith@example.com",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Work email"
+        }
+      },
+      "arabic": {
+        "value": "maryam.uae@example.com",
+        "actual": "maryam.uae@example.com",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Work email"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-english.png",
+        "arabicScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png"
+      }
+    },
+    {
+      "checkId": "phone-international",
+      "fieldPurpose": "Phone number",
+      "valueKey": "phoneInternational",
+      "classification": "market-specific",
+      "english": {
+        "value": "+14155552671",
+        "actual": "+14155552671",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Phone number"
+        }
+      },
+      "arabic": {
+        "value": "+971501234567",
+        "actual": "+971501234567",
+        "accepted": false,
+        "validationMessage": "Enter a valid US phone number",
+        "locator": {
+          "strategy": "label",
+          "value": "Phone number"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-english.png",
+        "arabicScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png"
+      }
+    },
+    {
+      "checkId": "password",
+      "fieldPurpose": "Password",
+      "valueKey": "password",
+      "classification": "pass",
+      "english": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password"
+        }
+      },
+      "arabic": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-english.png",
+        "arabicScreenshot": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png"
+      }
+    }
+  ],
+  "actionObservations": [],
+  "screenshots": {
+    "baseline": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-english.png",
+    "arabic": "/artifacts/cc1dfa5b-17f5-4a09-a369-866b2b499426-arabic.png"
+  },
+  "comparison": {
+    "english": "English persona executed in isolated en-US context across 4 field checks",
+    "arabic": "UAE persona produced evidence-backed failures"
+  },
+  "runId": "17ead6f3-1861-4ac6-aef6-966f62e15acf",
+  "reportUrl": "/report/17ead6f3-1861-4ac6-aef6-966f62e15acf"
+}

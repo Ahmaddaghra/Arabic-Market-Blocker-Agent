@@ -1,0 +1,347 @@
+{
+  "status": "completed",
+  "verdict": "Found 2 unique blockers across 2 failing test cases",
+  "url": "https://arabic-market-blocker-agent.onrender.com/demo/adaptive/",
+  "market": {
+    "id": "saudi-arabia",
+    "label": "Saudi Arabia",
+    "shortLabel": "Saudi",
+    "locale": "ar-SA",
+    "currency": "SAR"
+  },
+  "planner": "gpt-5.6-sol (adaptive)",
+  "fallbackReason": null,
+  "plannerLog": [
+    "Planner request started: model=gpt-5.6, fields=2, buttons=1, allowSubmission=true, timeout=90000ms",
+    "Planner response received: id=resp_06edfd36e058a240006a5ae99cece88198a92a9523b00664a4, model=gpt-5.6-sol, supported=true, actions=3",
+    "Planner assessment: The supplied DOM-grounded locators support a minimal Saudi signup flow test with semantically matched values and an allowed final submission.",
+    "Decision 1: fill greeting name with fullName via label=How should we greet you?; reason=Tests Arabic Unicode name acceptance in the greeting field.",
+    "Decision 2: fill mobile or WhatsApp number with phoneLocal via label=Mobile / WhatsApp; reason=Tests acceptance of a Saudi local mobile number in the contact field.",
+    "Decision 3: click page via role=Continue; reason=Completes the permitted signup flow after populating all required fields.",
+    "Execution comparison: valueKey=fullName, locator=label=How should we greet you?, EN value=\"John Smith\" accepted, Saudi value=\"عبد الرحمن بن خالد العتيبي\" Only Latin letters are allowed, classification=market-specific",
+    "Execution comparison: valueKey=phoneLocal, locator=label=Mobile / WhatsApp, EN value=\"+14155552671\" accepted, Saudi value=\"0551234567\" Use an accepted US contact number, classification=market-specific",
+    "Execution click: locator=role=Continue, EN=executed, AR=executed, submissionControl=false, flowCompleted=false",
+    "Adaptive replan 1: visible DOM changed after click; fields=2, buttons=1, planner=gpt-5.6-sol (adaptive), supported=true",
+    "Replan 1: Planner request started: model=gpt-5.6, fields=2, buttons=1, allowSubmission=true, timeout=90000ms",
+    "Replan 1: Planner response received: id=resp_013c8735d755c3fd006a5ae9a331d48198a6f0be4fa55b8510, model=gpt-5.6-sol, supported=true, actions=3",
+    "Replan 1: Planner assessment: The supplied form supports a bounded Saudi signup-flow audit for email, password, and submission. Name, phone, numeral, and BiDi checks are not possible because no corresponding DOM-grounded fields were supplied.",
+    "Replan 1: Decision 1: fill work email with email via label=Work email; reason=Enter the supplied Saudi persona email in the email field.",
+    "Replan 1: Decision 2: fill password with password via label=Password; reason=Enter the supplied benchmark password in the password field.",
+    "Replan 1: Decision 3: click signup submission via role=Create workspace; reason=Submit once to verify signup flow completion.",
+    "Execution comparison: valueKey=email, locator=label=Work email, EN value=\"john.smith@example.com\" accepted, Saudi value=\"abdulrahman.saudi@example.com\" accepted, classification=pass",
+    "Execution comparison: valueKey=password, locator=label=Password, EN value=\"SafeDemo!2026\" accepted, Saudi value=\"SafeDemo!2026\" accepted, classification=pass",
+    "Execution click: locator=role=Create workspace, EN=executed, AR=executed, submissionControl=true, flowCompleted=false"
+  ],
+  "allowSubmission": true,
+  "benchmarkEvaluation": {
+    "groundTruthBlockers": 2,
+    "detectedBlockers": 2,
+    "failingTestCases": 2,
+    "truePositives": 2,
+    "falsePositives": 0,
+    "falseNegatives": 0,
+    "precision": 1,
+    "recall": 1,
+    "submissionAttempted": true,
+    "flowCompleted": false
+  },
+  "fields": [
+    {
+      "tag": "input",
+      "type": "text",
+      "label": "How should we greet you?",
+      "name": "greeting_preference",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "How should we greet you?"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "text",
+      "label": "Mobile / WhatsApp",
+      "name": "preferred_contact_line",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Mobile / WhatsApp"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "email",
+      "label": "Work email",
+      "name": "email",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Work email"
+      }
+    },
+    {
+      "tag": "input",
+      "type": "password",
+      "label": "Password",
+      "name": "password",
+      "placeholder": "",
+      "required": true,
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      }
+    }
+  ],
+  "plan": [
+    {
+      "action": "fill",
+      "fieldPurpose": "greeting name",
+      "valueKey": "fullName",
+      "reason": "Tests Arabic Unicode name acceptance in the greeting field.",
+      "locator": {
+        "strategy": "label",
+        "value": "How should we greet you?"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "mobile or WhatsApp number",
+      "valueKey": "phoneLocal",
+      "reason": "Tests acceptance of a Saudi local mobile number in the contact field.",
+      "locator": {
+        "strategy": "label",
+        "value": "Mobile / WhatsApp"
+      }
+    },
+    {
+      "action": "click",
+      "fieldPurpose": null,
+      "valueKey": null,
+      "reason": "Completes the permitted signup flow after populating all required fields.",
+      "locator": {
+        "strategy": "role",
+        "value": "Continue"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "work email",
+      "valueKey": "email",
+      "reason": "Enter the supplied Saudi persona email in the email field.",
+      "locator": {
+        "strategy": "label",
+        "value": "Work email"
+      }
+    },
+    {
+      "action": "fill",
+      "fieldPurpose": "password",
+      "valueKey": "password",
+      "reason": "Enter the supplied benchmark password in the password field.",
+      "locator": {
+        "strategy": "label",
+        "value": "Password"
+      }
+    },
+    {
+      "action": "click",
+      "fieldPurpose": "signup submission",
+      "valueKey": null,
+      "reason": "Submit once to verify signup flow completion.",
+      "locator": {
+        "strategy": "role",
+        "value": "Create workspace"
+      }
+    }
+  ],
+  "deterministicPlan": [],
+  "findings": [
+    {
+      "id": "f28e6f59-5af3-4ef9-a7d6-898abd2f362a",
+      "rootCauseId": "name-ascii-only",
+      "title": "Arabic and mixed-script names are rejected",
+      "severity": "blocker",
+      "checkId": "arabic-name",
+      "summary": "Only Latin letters are allowed",
+      "impact": "A Saudi Arabia user may be unable to complete signup.",
+      "actual": "Only Latin letters are allowed",
+      "expected": "Accept the Saudi value when the English control is accepted",
+      "locator": {
+        "strategy": "label",
+        "value": "How should we greet you?"
+      },
+      "evidenceScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png",
+      "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"Arabic and mixed-script names are rejected\", async ({ page }) => {\n  await page.goto(\"https://arabic-market-blocker-agent.onrender.com/demo/adaptive/\");\n  const field = page.getByLabel(\"How should we greet you?\");\n  await field.fill(\"عبد الرحمن بن خالد العتيبي\");\n  await field.blur();\n  await expect(field).toHaveValue(\"عبد الرحمن بن خالد العتيبي\");\n  await expect(page.getByText(\"Only Latin letters are allowed\", { exact: false })).not.toBeVisible();\n});\n",
+      "testCases": [
+        {
+          "checkId": "arabic-name",
+          "valueKey": "fullName",
+          "value": "عبد الرحمن بن خالد العتيبي",
+          "actual": "Only Latin letters are allowed"
+        }
+      ]
+    },
+    {
+      "id": "4dc63b4b-1896-47eb-a421-2554b268300e",
+      "rootCauseId": "phone-us-only",
+      "title": "Saudi phone formats are rejected",
+      "severity": "blocker",
+      "checkId": "phone-local",
+      "summary": "Use an accepted US contact number",
+      "impact": "A Saudi Arabia user may be unable to complete signup.",
+      "actual": "Use an accepted US contact number",
+      "expected": "Accept the Saudi value when the English control is accepted",
+      "locator": {
+        "strategy": "label",
+        "value": "Mobile / WhatsApp"
+      },
+      "evidenceScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png",
+      "generatedTest": "import { test, expect } from '@playwright/test';\n\ntest(\"Saudi phone formats are rejected\", async ({ page }) => {\n  await page.goto(\"https://arabic-market-blocker-agent.onrender.com/demo/adaptive/\");\n  const field = page.getByLabel(\"Mobile / WhatsApp\");\n  await field.fill(\"0551234567\");\n  await field.blur();\n  await expect(field).toHaveValue(\"0551234567\");\n  await expect(page.getByText(\"Use an accepted US contact number\", { exact: false })).not.toBeVisible();\n});\n",
+      "testCases": [
+        {
+          "checkId": "phone-local",
+          "valueKey": "phoneLocal",
+          "value": "0551234567",
+          "actual": "Use an accepted US contact number"
+        }
+      ]
+    }
+  ],
+  "passes": [],
+  "fieldComparisons": [
+    {
+      "checkId": "arabic-name",
+      "fieldPurpose": "How should we greet you?",
+      "valueKey": "fullName",
+      "classification": "market-specific",
+      "english": {
+        "value": "John Smith",
+        "actual": "John Smith",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "How should we greet you?"
+        }
+      },
+      "arabic": {
+        "value": "عبد الرحمن بن خالد العتيبي",
+        "actual": "عبد الرحمن بن خالد العتيبي",
+        "accepted": false,
+        "validationMessage": "Only Latin letters are allowed",
+        "locator": {
+          "strategy": "label",
+          "value": "How should we greet you?"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-english.png",
+        "arabicScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png"
+      }
+    },
+    {
+      "checkId": "phone-local",
+      "fieldPurpose": "Mobile / WhatsApp",
+      "valueKey": "phoneLocal",
+      "classification": "market-specific",
+      "english": {
+        "value": "+14155552671",
+        "actual": "+14155552671",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Mobile / WhatsApp"
+        }
+      },
+      "arabic": {
+        "value": "0551234567",
+        "actual": "0551234567",
+        "accepted": false,
+        "validationMessage": "Use an accepted US contact number",
+        "locator": {
+          "strategy": "label",
+          "value": "Mobile / WhatsApp"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-english.png",
+        "arabicScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png"
+      }
+    },
+    {
+      "checkId": "email",
+      "fieldPurpose": "Work email",
+      "valueKey": "email",
+      "classification": "pass",
+      "english": {
+        "value": "john.smith@example.com",
+        "actual": "john.smith@example.com",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Work email"
+        }
+      },
+      "arabic": {
+        "value": "abdulrahman.saudi@example.com",
+        "actual": "abdulrahman.saudi@example.com",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Work email"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-english.png",
+        "arabicScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png"
+      }
+    },
+    {
+      "checkId": "password",
+      "fieldPurpose": "Password",
+      "valueKey": "password",
+      "classification": "pass",
+      "english": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password"
+        }
+      },
+      "arabic": {
+        "value": "SafeDemo!2026",
+        "actual": "SafeDemo!2026",
+        "accepted": true,
+        "validationMessage": "",
+        "locator": {
+          "strategy": "label",
+          "value": "Password"
+        }
+      },
+      "evidence": {
+        "englishScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-english.png",
+        "arabicScreenshot": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png"
+      }
+    }
+  ],
+  "actionObservations": [],
+  "screenshots": {
+    "baseline": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-english.png",
+    "arabic": "/artifacts/00f8f719-2739-469b-9448-866ae786f333-arabic.png"
+  },
+  "comparison": {
+    "english": "English persona executed in isolated en-US context across 4 field checks",
+    "arabic": "Saudi persona produced evidence-backed failures"
+  },
+  "runId": "61beea7c-c712-4346-9fa5-f8d39f2ab614",
+  "reportUrl": "/report/61beea7c-c712-4346-9fa5-f8d39f2ab614"
+}
