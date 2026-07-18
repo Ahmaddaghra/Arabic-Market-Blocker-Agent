@@ -88,3 +88,12 @@ Repeated failing values are test cases, not new blockers. The audit deduplicates
 The API accepts `allowSubmission: true` only when the URL is the same-origin `/demo` benchmark. For every other URL the server forces it to `false`, and the planner is instructed not to click submit. The controlled benchmark may submit because it is owned, disposable, and marks success with `data-audit-success="true"`.
 
 For reproducibility, run the same deployed `/demo/` URL twice and compare `planner`, `plan`, `findings`, `benchmarkEvaluation`, and the planner decision log. Wording or action ordering may vary; the unique root-cause count and benchmark metrics must remain stable.
+
+Observed deployed repeatability check (2026-07-18):
+
+| Run | Planner | Response ID | Unique blockers | Failing cases | Precision | Recall | Submission attempted | Flow completed |
+|---|---|---|---:|---:|---:|---:|---|---|
+| 1 | `gpt-5.6-sol-adaptive` | `resp_0cc84ad3c0ee7d3e006a5ac88e2d88819bbbbb862884da5250` | 2 | 6 | 1.0 | 1.0 | true | false |
+| 2 | `gpt-5.6-sol-adaptive` | `resp_079e8aba30fb2c78006a5ac8a39aa08198b1fe64ef95695200` | 2 | 5 | 1.0 | 1.0 | true | false |
+
+The adaptive planner varied the order and number of repeated test cases, but it kept the unique blocker count and benchmark metrics stable. `flowCompleted: false` is the expected result for this seeded benchmark: the final submission click executed, then the seeded Arabic-name and Saudi-phone validation blockers prevented success.
