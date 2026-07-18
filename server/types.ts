@@ -120,4 +120,6 @@ export type AuditResult = {
   actionObservations: ActionObservation[];
   screenshots: { baseline: string; arabic: string };
   comparison: { english: string; arabic: string };
+  runId?: string;
+  reportUrl?: string;
 };

@@ -2,6 +2,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import path from "node:path";
 import crypto from "node:crypto";
+import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { assertSafeUrl } from "./security.js";
 import { runAudit } from "./audit.js";
@@ -10,6 +11,26 @@ import type { AuditProgress, AuditResult } from "./types.js";
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const runsDirectory = path.resolve("runs");
+async function persistRun(id: string, result: AuditResult) {
+  await fs.mkdir(runsDirectory, { recursive: true });
+  const safeJson = JSON.stringify(result).replace(
+    /sk-[A-Za-z0-9_-]{12,}/g,
+    "[REDACTED]",
+  );
+  await fs.writeFile(path.join(runsDirectory, `${id}.json`), safeJson, "utf8");
+}
+async function readRun(id: string) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return null;
+  try {
+    return JSON.parse(
+      await fs.readFile(path.join(runsDirectory, `${id}.json`), "utf8"),
+    ) as AuditResult;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw error;
+  }
+}
 app.disable("x-powered-by");
 // Render terminates TLS and forwards the original client IP through one proxy.
 // Trusting exactly one hop lets express-rate-limit identify clients without
@@ -51,14 +72,24 @@ app.get("/api/markets", async (_req, res) => {
       })),
     );
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error:
-          error instanceof Error
-            ? error.message
-            : "Market packs could not be loaded.",
-      });
+    res.status(500).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : "Market packs could not be loaded.",
+    });
+  }
+});
+app.get("/api/reports/:id", async (req, res) => {
+  try {
+    const result = await readRun(req.params.id);
+    if (!result)
+      return res
+        .status(404)
+        .json({ error: "This report was not found or has expired." });
+    res.json(result);
+  } catch {
+    res.status(500).json({ error: "This report could not be loaded safely." });
   }
 });
 app.post("/api/audits", async (req, res) => {
@@ -169,6 +200,9 @@ app.post("/api/audit-jobs", auditLimiter, (req, res) => {
         ),
       ]);
       job.result = result;
+      result.runId = id;
+      result.reportUrl = `/report/${id}`;
+      await persistRun(id, result);
       job.status =
         result.status === "unsupported" ? "unsupported" : "completed";
     } catch (error) {

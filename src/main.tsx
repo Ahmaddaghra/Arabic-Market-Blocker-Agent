@@ -82,6 +82,8 @@ type Result = {
   }>;
   screenshots: { baseline: string; arabic: string };
   comparison: { english: string; arabic: string };
+  runId?: string;
+  reportUrl?: string;
 };
 type MarketSummary = {
   id: string;
@@ -183,6 +185,7 @@ function App() {
   const [error, setError] = useState("");
   const [events, setEvents] = useState<ProgressEvent[]>([]);
   const [jobStatus, setJobStatus] = useState("idle");
+  const reportId = location.pathname.match(/^\/report\/([0-9a-f-]{36})$/)?.[1];
   useEffect(() => {
     void fetch("/api/markets")
       .then(async (response) => {
@@ -197,6 +200,25 @@ function App() {
         ),
       );
   }, []);
+  useEffect(() => {
+    if (!reportId) return;
+    setLoading(true);
+    void fetch(`/api/reports/${reportId}`, { cache: "no-store" })
+      .then(async (response) => {
+        const body = await response.json();
+        if (!response.ok)
+          throw new Error(body.error || "This report is unavailable.");
+        setResult(body);
+      })
+      .catch((error) =>
+        setError(
+          error instanceof Error
+            ? error.message
+            : "This report is unavailable.",
+        ),
+      )
+      .finally(() => setLoading(false));
+  }, [reportId]);
   const selectedMarket = markets.find((market) => market.id === marketId) || {
     id: "saudi-arabia",
     label: "Saudi Arabia",
@@ -278,78 +300,84 @@ function App() {
         <a href="#scope">Scope</a>
       </header>
       <main>
-        <section className="runner">
-          <label htmlFor="url">Public signup form URL</label>
-          <div className="run-row">
-            <input
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com/signup"
-            />
-            <select
-              aria-label="Market"
-              value={marketId}
-              onChange={(event) => setMarketId(event.target.value)}
-            >
-              {markets.map((market) => (
-                <option value={market.id} key={market.id}>
-                  {market.label}
-                </option>
-              ))}
-            </select>
-            <button onClick={run} disabled={loading || !url}>
-              {loading
-                ? "Audit running live…"
-                : `Run ${selectedMarket.shortLabel} signup audit`}
-            </button>
-          </div>
-          <div className="sample-targets" aria-label="Sample targets">
-            {samples.map((sample) => (
-              <button
-                key={sample.label}
-                type="button"
-                onClick={() => {
-                  setUrl(sample.url);
-                  setMarketId(sample.marketId);
-                }}
+        {!reportId && (
+          <section className="runner">
+            <label htmlFor="url">Public signup form URL</label>
+            <div className="run-row">
+              <input
+                id="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com/signup"
+              />
+              <select
+                aria-label="Market"
+                value={marketId}
+                onChange={(event) => setMarketId(event.target.value)}
               >
-                <strong>{sample.label}</strong>
-                <span>{sample.hint}</span>
+                {markets.map((market) => (
+                  <option value={market.id} key={market.id}>
+                    {market.label}
+                  </option>
+                ))}
+              </select>
+              <button onClick={run} disabled={loading || !url}>
+                {loading
+                  ? "Audit running live…"
+                  : `Run ${selectedMarket.shortLabel} signup audit`}
               </button>
-            ))}
-          </div>
-          <p className="limits">
-            ◈ Public signup forms only · No CAPTCHA · No auth wall · Submission
-            enabled only for the owned /demo benchmark
-          </p>
-        </section>
-        <section className="timeline">
-          {stages.map((s, i) => (
-            <div
-              className={loading ? "active" : timelineDone ? "done" : ""}
-              key={s}
-            >
-              <span>{timelineDone ? "✓" : i + 1}</span>
-              <b>{s}</b>
-              <small>
-                {timelineDone
-                  ? "Completed"
-                  : timelineStopped
-                    ? "Stopped safely"
-                    : loading
-                      ? "Streaming"
-                      : "Bounded step"}
-              </small>
             </div>
-          ))}
-        </section>
-        {(loading || events.length > 0) && (
+            <div className="sample-targets" aria-label="Sample targets">
+              {samples.map((sample) => (
+                <button
+                  key={sample.label}
+                  type="button"
+                  onClick={() => {
+                    setUrl(sample.url);
+                    setMarketId(sample.marketId);
+                  }}
+                >
+                  <strong>{sample.label}</strong>
+                  <span>{sample.hint}</span>
+                </button>
+              ))}
+            </div>
+            <p className="limits">
+              ◈ Public signup forms only · No CAPTCHA · No auth wall ·
+              Submission enabled only for the owned /demo benchmark
+            </p>
+          </section>
+        )}
+        {!reportId && (
+          <section className="timeline">
+            {stages.map((s, i) => (
+              <div
+                className={loading ? "active" : timelineDone ? "done" : ""}
+                key={s}
+              >
+                <span>{timelineDone ? "✓" : i + 1}</span>
+                <b>{s}</b>
+                <small>
+                  {timelineDone
+                    ? "Completed"
+                    : timelineStopped
+                      ? "Stopped safely"
+                      : loading
+                        ? "Streaming"
+                        : "Bounded step"}
+                </small>
+              </div>
+            ))}
+          </section>
+        )}
+        {!reportId && (loading || events.length > 0) && (
           <LiveProgress events={events} status={jobStatus} />
         )}{" "}
         {error && (
           <section className="unsupported">
-            <strong>Audit stopped safely</strong>
+            <strong>
+              {reportId ? "Report unavailable" : "Audit stopped safely"}
+            </strong>
             <p>
               {events.at(-1)?.type === "graceful-exit"
                 ? events.at(-1)?.message
@@ -370,14 +398,16 @@ function App() {
           </section>
         )}
         {result && result.status === "completed" && <Results result={result} />}
-        <section id="scope" className="scope">
-          <h2>Intentionally bounded</h2>
-          <p>
-            One public standard signup flow, one selected market rule pack, no
-            CAPTCHA bypass, no authentication wall, no payment, and no claim of
-            certification.
-          </p>
-        </section>
+        {!reportId && (
+          <section id="scope" className="scope">
+            <h2>Intentionally bounded</h2>
+            <p>
+              One public standard signup flow, one selected market rule pack, no
+              CAPTCHA bypass, no authentication wall, no payment, and no claim
+              of certification.
+            </p>
+          </section>
+        )}
       </main>
       <footer>
         Safe URL resolution · Private IP blocking · Hard timeout · Rate limited
@@ -571,6 +601,20 @@ function Results({ result }: { result: Result }) {
         </div>
       </aside>
       <div className="detail">
+        {result.reportUrl && (
+          <div className="report-actions">
+            <span>Read-only shareable report</span>
+            <button
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  new URL(result.reportUrl!, location.origin).href,
+                )
+              }
+            >
+              Copy report link
+            </button>
+          </div>
+        )}
         <div className="planner-log">
           <div>
             <b>Planner run log</b>
