@@ -4,6 +4,24 @@ A bounded developer tool that tests one standard, public signup form with a Saud
 
 The verdict language is deliberately narrow: **Found N blockers** or **No blockers found in tested flows**. The project does not certify a product or claim broad market readiness.
 
+**Live demo:** https://arabic-market-blocker-agent.onrender.com
+
+## OpenAI Build Week
+
+This project was built for OpenAI Build Week as a bounded developer tool, not a general-purpose crawler.
+
+- **GPT-5.6:** reads the currently visible, extracted DOM; maps unfamiliar labels to Saudi rule-pack values; chooses grounded `fill`, `click`, and `observe` actions; and replans when a safe navigation click reveals a new form step.
+- **Codex:** helped design the bounded architecture, implement the Playwright executor and React evidence UI, diagnose deployment failures, write tests, review false-positive risk, and verify deployed runs.
+
+### Judge test in under two minutes
+
+1. Open the [live demo](https://arabic-market-blocker-agent.onrender.com).
+2. Paste `https://arabic-market-blocker-agent.onrender.com/demo/adaptive/`.
+3. Click **Run Saudi signup audit**.
+4. Confirm the result says `planner: gpt-5.6-sol-adaptive`, then inspect **Why GPT-5.6 mattered**, the EN/AR field comparison, and the generated test.
+
+The centerpiece target uses unconventional labels and a second step revealed only after **Continue**. The deterministic fallback maps `0/2` initial fields; GPT-5.6 maps them, navigates, replans against the newly visible DOM, and completes the bounded audit. Recorded proof: [fallback run](evaluation/runs/adaptive-multistep-fallback.json) and [adaptive run](evaluation/runs/adaptive-multistep-gpt.json).
+
 ## Supported scope
 
 - Public, standard signup forms
@@ -11,6 +29,8 @@ The verdict language is deliberately narrow: **Found N blockers** or **No blocke
 - One Saudi Arabia rule pack in `data/markets/saudi-arabia.json`
 - At most ten documented checks
 - Hard navigation timeout and bounded plan size
+
+Adding another market is intentionally a data change: add one versioned JSON rule pack beside `data/markets/saudi-arabia.json`. The MVP does not introduce a persona engine or market-specific application architecture.
 
 Unsupported pages stop with a clear explanation. The runner never attempts CAPTCHA bypass or credentialed flows.
 
@@ -40,6 +60,15 @@ ALLOW_PRIVATE_TARGETS=true npm start
 Open `http://localhost:3000`, and audit `http://127.0.0.1:3000/demo/`. `ALLOW_PRIVATE_TARGETS=true` exists only for this local benchmark. Never enable it in production.
 
 Set `OPENAI_API_KEY` to enable the GPT-5.6 adaptive planner. Without it, the visible planner label changes to `deterministic-fallback`; the controlled benchmark and safety checks still run truthfully.
+
+## Known limitations
+
+- Only visible fields in public, standard signup forms are inspected; CAPTCHA, authentication walls, iframes with inaccessible content, payment, and highly custom controls are unsupported.
+- Adaptive planning is bounded to the supplied DOM locators, at most 12 actions per planning round, and at most two DOM-change replans.
+- External targets are never submitted. Only same-origin `/demo` targets can receive `allowSubmission: true`, and the server revalidates that gate.
+- Browser validation and error text can vary by target and locale. A market-specific finding requires the English control to pass where the Saudi value fails; shared failures are labeled general form issues.
+- Generated regression tests are grounded in observed locators but may still need selector review on unstable third-party DOMs.
+- Render cold starts and model latency can make a correct audit take up to roughly 90 seconds.
 
 ## Verify
 

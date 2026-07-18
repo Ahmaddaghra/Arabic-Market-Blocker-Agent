@@ -1,1 +1,24 @@
-import{test,expect}from'@playwright/test';test('controlled benchmark exposes grounded blockers and planner provenance',async({page})=>{await page.goto('/');await page.getByLabel('Public signup form URL').fill('http://127.0.0.1:3000/demo/');await page.getByRole('button',{name:'Run Saudi signup audit'}).click();await expect(page.getByRole('heading',{name:/Found 2 unique blockers/})).toBeVisible({timeout:30000});await expect(page.getByText('Generated regression test')).toBeVisible();await expect(page.locator('pre')).toContainText('getByLabel');await expect(page.getByText(/Fallback reason:/)).toBeVisible();await expect(page.getByText('Planner run log')).toBeVisible();});
+import{test,expect}from'@playwright/test';
+
+test('controlled benchmark uses the adaptive planner when an API key is configured',async({page})=>{
+  test.skip(!process.env.OPENAI_API_KEY,'OPENAI_API_KEY is required for the adaptive integration path.');
+  await page.goto('/');
+  await page.getByLabel('Public signup form URL').fill('http://127.0.0.1:3000/demo/');
+  await page.getByRole('button',{name:'Run Saudi signup audit'}).click();
+  await expect(page.getByRole('heading',{name:/Found 2 unique blockers/})).toBeVisible({timeout:120000});
+  await expect(page.getByText(/Planner: gpt-5\.6.*-adaptive/)).toBeVisible();
+  await expect(page.getByText('Adaptive planner completed without fallback.')).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Why GPT-5.6 mattered'})).toBeVisible();
+  await expect(page.getByText('Per-field control comparison')).toBeVisible();
+});
+
+test('missing API key is exposed as an explicit fallback path',async({page})=>{
+  test.skip(Boolean(process.env.OPENAI_API_KEY),'Fallback integration path runs only when the server has no API key.');
+  await page.goto('/');
+  await page.getByLabel('Public signup form URL').fill('http://127.0.0.1:3000/demo/');
+  await page.getByRole('button',{name:'Run Saudi signup audit'}).click();
+  await expect(page.getByRole('heading',{name:/Found 2 unique blockers/})).toBeVisible({timeout:30000});
+  await expect(page.getByText(/Planner: deterministic-fallback/)).toBeVisible();
+  await expect(page.getByText(/Fallback reason:.*missing_key/)).toBeVisible();
+  await expect(page.getByText('Planner run log')).toBeVisible();
+});
