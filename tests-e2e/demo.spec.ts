@@ -5,7 +5,8 @@ test('controlled benchmark uses the adaptive planner when an API key is configur
   await page.goto('/');
   await page.getByLabel('Public signup form URL').fill('http://127.0.0.1:3000/demo/');
   await page.getByRole('button',{name:'Run Saudi signup audit'}).click();
-  await expect(page.getByRole('heading',{name:/Found 2 unique blockers/})).toBeVisible({timeout:120000});
+  await expect(page.getByText('Live audit progress')).toBeVisible();
+  await expect(page.getByRole('heading',{level:1,name:/Found 2 unique blockers/})).toBeVisible({timeout:120000});
   await expect(page.getByText(/Planner: gpt-5\.6.*-adaptive/)).toBeVisible();
   await expect(page.getByText('Adaptive planner completed without fallback.')).toBeVisible();
   await expect(page.getByRole('heading',{name:'Why GPT-5.6 mattered'})).toBeVisible();
@@ -17,8 +18,21 @@ test('missing API key is exposed as an explicit fallback path',async({page})=>{
   await page.goto('/');
   await page.getByLabel('Public signup form URL').fill('http://127.0.0.1:3000/demo/');
   await page.getByRole('button',{name:'Run Saudi signup audit'}).click();
-  await expect(page.getByRole('heading',{name:/Found 2 unique blockers/})).toBeVisible({timeout:30000});
-  await expect(page.getByText(/Planner: deterministic-fallback/)).toBeVisible();
+  await expect(page.getByText('Live audit progress')).toBeVisible();
+  await expect(page.getByRole('heading',{level:1,name:/Found 2 unique blockers/})).toBeVisible({timeout:30000});
+  await expect(page.getByText('Planner: deterministic-fallback',{exact:true}).first()).toBeVisible();
   await expect(page.getByText(/Fallback reason:.*missing_key/)).toBeVisible();
   await expect(page.getByText('Planner run log')).toBeVisible();
+  await expect(page.getByText(/Step \d+\/\d+/).first()).toBeVisible();
+  await expect(page.getByText(/Planner: deterministic-fallback/).first()).toBeVisible();
+});
+
+test('unsupported adaptive demo streams its exact graceful-exit reason',async({page})=>{
+  test.skip(Boolean(process.env.OPENAI_API_KEY),'Missing-key graceful exit requires a server without an API key.');
+  await page.goto('/');
+  await page.getByLabel('Public signup form URL').fill('http://127.0.0.1:3000/demo/adaptive/');
+  await page.getByRole('button',{name:'Run Saudi signup audit'}).click();
+  await expect(page.getByText('Live audit progress')).toBeVisible();
+  await expect(page.getByText(/Deterministic fallback could not safely map at least two visible fields/).first()).toBeVisible({timeout:30000});
+  await expect(page.getByText('Unsupported site')).toBeVisible();
 });

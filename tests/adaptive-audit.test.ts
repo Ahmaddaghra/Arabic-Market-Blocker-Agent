@@ -4,6 +4,7 @@ import{readFile}from'node:fs/promises';
 import{fileURLToPath}from'node:url';
 import{runAudit}from'../server/audit.js';
 import type{Field,PlanAction}from'../server/types.js';
+import type{AuditProgress}from'../server/types.js';
 import type{PlanResult}from'../server/planner.js';
 
 let server:Server;let targetUrl:string;
@@ -23,7 +24,8 @@ const adaptiveMock=async(fields:Field[]):Promise<PlanResult>=>fields.some(field=
 
 describe('guarded adaptive audit integration',()=>{
   it('executes a valid mock-GPT plan, replans, and completes the multi-step audit',async()=>{
-    const audit=await runAudit(new URL(targetUrl),{allowSubmission:true,controlledBenchmark:true,planner:adaptiveMock});
+    const progress:AuditProgress[]=[];
+    const audit=await runAudit(new URL(targetUrl),{allowSubmission:true,controlledBenchmark:true,planner:adaptiveMock,onProgress:event=>progress.push(event)});
     expect(audit.status).toBe('completed');
     expect(audit.planner).toBe('mock-gpt-5.6-adaptive');
     expect(audit.findings.map(finding=>finding.rootCauseId).sort()).toEqual(['name-ascii-only','phone-us-only']);
@@ -31,6 +33,11 @@ describe('guarded adaptive audit integration',()=>{
     expect(audit.plannerLog.join('\n')).toContain('Adaptive replan 1');
     expect(audit.plannerLog.join('\n')).toContain('Execution click: locator=role=Create workspace, EN=executed, AR=executed');
     expect(audit.benchmarkEvaluation?.submissionAttempted).toBe(true);
+    expect(progress.some(event=>event.message.includes('Identified 2 visible fields'))).toBe(true);
+    expect(progress.some(event=>event.message.includes('New step revealed'))).toBe(true);
+    expect(progress.some(event=>event.type==='finding'&&event.message.includes('Blocker found'))).toBe(true);
+    expect(progress.at(-1)?.type).toBe('complete');
+    expect(progress.every((event,index)=>event.sequence===index+1)).toBe(true);
   },30000);
 
   it('does not create a finding for a missing or stale locator',async()=>{

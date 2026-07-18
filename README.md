@@ -101,6 +101,8 @@ DNS rebinding defenses should be strengthened further before production use by p
 
 `React UI → rate-limited Express API → URL safety gate → isolated Playwright → DOM extractor → GPT-5.6 planner → evidence verifier → grounded test generator`
 
+The UI starts a bounded job with `POST /api/audit-jobs` and polls its scoped status URL. Progress events come from the real browser/planner/executor path—not a timer—and include the current step, estimated total, active planner, DOM field count, action outcomes, blockers, replans, and exact graceful-exit reasons. The original synchronous `POST /api/audits` remains available for reproducible evaluation scripts.
+
 The controlled `/demo/` target is a transparent benchmark with two documented failures: Arabic Unicode names and Saudi phone numbers. It is not presented as real-world validation.
 
 ## Controlled benchmark ground truth
