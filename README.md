@@ -5,6 +5,8 @@ A bounded developer tool that tests one standard, public signup form with a sele
 The verdict language is deliberately narrow: **Found N blockers** or **No blockers found in tested flows**. The project does not certify a product or claim broad market readiness.
 
 **Live demo:** https://arabic-market-blocker-agent.onrender.com
+**Demo video (3 min):** https://youtu.be/E5VylTw4lQM?si=Wsjom3vpZ4LDQwAW
+**Permanent audit reports:** [benchmark-saudi](…/report/benchmark-saudi) · [benchmark-uae](…/report/benchmark-uae) · [multistep-gpt](…/report/multistep-gpt) · [external-lambdatest](…/report/external-lambdatest)
 
 ## OpenAI Build Week
 
@@ -169,3 +171,5 @@ Rejected candidate: the Magento Software Testing Board URL returned an SSL/revea
 These external findings and passes are observations from bounded, non-submitting runs. They do not certify the applications or prove the absence of other blockers.
 
 The LambdaTest run demonstrates the false-positive guard: because the English control failed too, the tool refused to claim a market-specific blocker.
+
+The pipeline is flow-agnostic: next axes are more markets (each is one JSON file) and more flows (checkout).
