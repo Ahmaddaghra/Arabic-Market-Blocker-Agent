@@ -5,7 +5,9 @@ A bounded developer tool that tests one standard, public signup form with a sele
 The verdict language is deliberately narrow: **Found N blockers** or **No blockers found in tested flows**. The project does not certify a product or claim broad market readiness.
 
 **Live demo:** https://arabic-market-blocker-agent.onrender.com
+
 **Demo video (3 min):** https://youtu.be/E5VylTw4lQM?si=Wsjom3vpZ4LDQwAW
+
 **Permanent audit reports:** [benchmark-saudi](…/report/benchmark-saudi) · [benchmark-uae](…/report/benchmark-uae) · [multistep-gpt](…/report/multistep-gpt) · [external-lambdatest](…/report/external-lambdatest)
 
 ## OpenAI Build Week
