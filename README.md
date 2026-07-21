@@ -8,7 +8,7 @@ The verdict language is deliberately narrow: **Found N blockers** or **No blocke
 
 **Demo video (3 min):** https://youtu.be/E5VylTw4lQM?si=Wsjom3vpZ4LDQwAW
 
-**Permanent audit reports:** [benchmark-saudi](…/report/benchmark-saudi) · [benchmark-uae](…/report/benchmark-uae) · [multistep-gpt](…/report/multistep-gpt) · [external-lambdatest](…/report/external-lambdatest)
+**Permanent audit reports:** [Controlled benchmark (Saudi)](https://arabic-market-blocker-agent.onrender.com/report/benchmark-saudi) · [Controlled benchmark (UAE)](https://arabic-market-blocker-agent.onrender.com/report/benchmark-uae) · [Multi-step GPT run](https://arabic-market-blocker-agent.onrender.com/report/multistep-gpt) · [External site (LambdaTest)](https://arabic-market-blocker-agent.onrender.com/report/external-lambdatest)
 
 ## OpenAI Build Week
 
